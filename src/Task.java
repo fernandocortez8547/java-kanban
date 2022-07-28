@@ -3,12 +3,14 @@ public class Task {
     String name;
     String description;
     String status;
+
     public Task(int id, String name, String description, String status) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
     }
+
     int getId() {
        return id;
     }

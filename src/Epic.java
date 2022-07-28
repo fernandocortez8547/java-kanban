@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
 public class Epic extends Task{
-    String description;
     ArrayList<Integer> subIds;
 
     public Epic(int id, String name, String description, String status ) {
         super(id, name, description, status);
+        subIds =new ArrayList<>();
     }
     void setSubIds(int id) {
         subIds.add(id);
@@ -20,6 +20,7 @@ public class Epic extends Task{
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
+                ", subTasks size ='" + subIds.size() + '\'' +
                 '}';
     }
 }
