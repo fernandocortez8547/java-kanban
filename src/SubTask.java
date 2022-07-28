@@ -1,9 +1,17 @@
 import java.util.ArrayList;
 
 public class SubTask extends Task{
-    int supId;
+    private int supId;
     public SubTask(int id, String name, String description, String status, int supId) {
         super(id, name, description, status);
+        this.supId = supId;
+    }
+
+    public int getSupId() {
+        return supId;
+    }
+
+    public void setSupId(int supId) {
         this.supId = supId;
     }
 
