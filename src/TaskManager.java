@@ -23,12 +23,33 @@ public class TaskManager {
         }
         return newId;
     }
-
     public int add(SubTask subTask) {
         int newId = nextId++;
+        Epic epic = returnEpic(subTask.getSupId());
+        epic.setSubIds(subTask.getId());
         subTask.setId(newId);
         subTasks.put(subTask.getId(), subTask);
+        updateStatus(subTask.getSupId());
         return newId;
+    }
+
+    private void updateStatus(int epicId) {
+        int curNew = 0;
+        int curDone = 0;
+        Epic epic = epics.get(epicId);
+        for(int i : subTasks.keySet()) {
+            SubTask s = subTasks.get(i);
+            if(s.getSupId() == epicId && s.getStatus().equals("new")) {
+                curNew++;
+            } else if(s.getSupId() == epicId && s.getStatus().equals("done")) {
+                curDone++;
+            } else continue;
+        }
+        if(epic.getSubIds().size() == 0 || epic.getSubIds().size() == curNew) {
+            epic.setStatus("new");
+        } else if(epic.getSubIds().size() == curDone) {
+            epic.setStatus("done");
+        } else epic.setStatus("inProgress");
     }
 
     public int update(Task task) {
@@ -49,33 +70,31 @@ public class TaskManager {
         }
         return subTask.getId();
     }
+
     HashMap<Integer, Task> returnTasks() {
         return tasks;
     }
     Task returnTask(int key) {
         return tasks.get(key);
     }
-    HashMap<Integer, Epic> returnEpics() {
+    HashMap<Integer, Epic> returnAllEpics() {
         return epics;
     }
     Epic returnEpic (int key) {
         return epics.get(key);
     }
-
-    ArrayList<SubTask> returnSubTasks(Epic epic) {
-        int epicId = epic.getId();
+    HashMap<Integer, SubTask> returnAllSubTasks() {
+        return subTasks;
+    }
+    ArrayList<SubTask> returnSubTasks(int supId) {
         ArrayList<SubTask> al = new ArrayList<>();
-
         for(int key : subTasks.keySet()) {
             SubTask s = subTasks.get(key);
-            if(s.getSupId() == epicId) {
+            if(s.getSupId() == supId) {
                 al.add(s);
             }
         }
         return al;
-    }
-    HashMap<Integer, SubTask> returnSubTask() {
-        return subTasks;
     }
     SubTask returnSubTask(int key) {
         return subTasks.get(key);
@@ -92,11 +111,18 @@ public class TaskManager {
         tasks.remove(key);
     }
     void deleteEpic(int key) {
-        tasks.remove(key);
+        epics.remove(key);
         for(int i : subTasks.keySet()) {
             SubTask s = subTasks.get(i);
             if(s.getSupId() == key) {
                 subTasks.remove(i);
+            }
+        }
+    }
+    void deleteSubEpics(int subId) {
+        for(SubTask s : subTasks.values()) {
+            if(s.getSupId() == subId) {
+                subTasks.remove(subId);
             }
         }
     }
