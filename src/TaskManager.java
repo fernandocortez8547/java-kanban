@@ -71,7 +71,7 @@ public class TaskManager {
         return subTask.getId();
     }
 
-    HashMap<Integer, Task> returnTasks() {
+    HashMap<Integer, Task> returnAllTasks() {
         return tasks;
     }
     Task returnTask(int key) {
@@ -100,21 +100,29 @@ public class TaskManager {
         return subTasks.get(key);
     }
 
-    void deleteTasks() {
+    void deleteAllTasks() {
         tasks.clear();
     }
-    void deleteEpics() {
+    void deleteAllEpics() {
         epics.clear();
         subTasks.clear();
     }
-    void deleteTask(int key) {
-        tasks.remove(key);
+    void deleteAllSubTasks() {
+        subTasks.clear();
+        for(int supId : epics.keySet()) {
+            Epic epic = epics.get(supId);
+            epic.deleteSubIds();
+            updateStatus(supId);
+        }
     }
-    void deleteEpic(int key) {
-        epics.remove(key);
+    void deleteTask(int taskId) {
+        tasks.remove(taskId);
+    }
+    void deleteEpic(int supId) {
+        epics.remove(supId);
         for(int i : subTasks.keySet()) {
             SubTask s = subTasks.get(i);
-            if(s.getSupId() == key) {
+            if(s.getSupId() == supId) {
                 subTasks.remove(i);
             }
         }
@@ -125,5 +133,6 @@ public class TaskManager {
                 subTasks.remove(subId);
             }
         }
+        updateStatus(subId);
     }
 }

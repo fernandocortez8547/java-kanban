@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        //Наставник сказал, что проверки неправильного ввода не предусмотрено этой программой, потому мы в них утоним ¯\_(ツ)_/¯
+        //Наставник сказал, что проверки неправильного ввода не предусмотрено этой программой, потому что мы в них утоним ¯\_(ツ)_/¯
         TaskManager taskManager = new TaskManager();
         //создание простой задачи
         Task task = new Task(0,
@@ -50,10 +50,19 @@ public class Main {
                 epic1.getId());
         taskManager.add(subTask2);
 
-        System.out.println(taskManager.returnEpic(epic1.getId()));
-        System.out.println(taskManager.returnSubTasks(epic1.getId()) + "\n");
+        //Изменение имени эпика
+        Epic epic2 = new Epic(0, "Задача 3", "Описание", "new");
+        taskManager.add(epic2);
+        System.out.println("\n " + taskManager.returnEpic(epic2.getId()));
+        epic2.setName("Задача 3.1");
+        System.out.println("\n " + taskManager.returnEpic(epic2.getId()));
 
-        taskManager.deleteEpic(epic1.getId());
-        System.out.println(taskManager.returnEpic(epic1.getId()));
+        //Изменение имени подзадачи
+        SubTask subTask3 = new SubTask(0, "Подзадача 1", "Описание", "new", epic2.getId());
+        taskManager.add(subTask3);
+        System.out.println(taskManager.returnSubTask(subTask3.getId()));
+        subTask3.setName("Подзадача 3 задачи");
+        taskManager.update(subTask3);
+        System.out.println(taskManager.returnSubTask(subTask3.getId()));
     }
 }
