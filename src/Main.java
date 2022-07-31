@@ -1,5 +1,6 @@
 import java.util.Scanner;
-
+import Tasks.*;
+import Manager.*;
 public class Main {
     public static void main(String[] args) {
         //Наставник сказал, что проверки неправильного ввода не предусмотрено этой программой, потому что мы в них утоним ¯\_(ツ)_/¯
@@ -34,7 +35,7 @@ public class Main {
         taskManager.add(subTask1);
 
         System.out.println(taskManager.returnEpic(epic.getId()));
-        System.out.println(taskManager.returnSubTasks(epic.getId()) + "\n");
+        System.out.println(taskManager.returnEpicSubTasks(epic.getId()) + "\n");
 
         //Создание одного эпика с одной подзадачей. Эпик:
         Epic epic1 = new Epic(0,
@@ -49,13 +50,17 @@ public class Main {
                 "done",
                 epic1.getId());
         taskManager.add(subTask2);
+        System.out.println(taskManager.returnEpic(epic1.getId()));
+        System.out.println(taskManager.returnEpicSubTasks(epic1.getId()) + "\n");
+
 
         //Изменение имени эпика
         Epic epic2 = new Epic(0, "Задача 3", "Описание", "new");
         taskManager.add(epic2);
-        System.out.println("\n " + taskManager.returnEpic(epic2.getId()));
+        System.out.println(taskManager.returnEpic(epic2.getId()));
         epic2.setName("Задача 3.1");
-        System.out.println("\n " + taskManager.returnEpic(epic2.getId()));
+        taskManager.updateEpicName(epic2);
+        System.out.println(taskManager.returnEpic(epic2.getId()));
 
         //Изменение имени подзадачи
         SubTask subTask3 = new SubTask(0, "Подзадача 1", "Описание", "new", epic2.getId());
@@ -64,5 +69,8 @@ public class Main {
         subTask3.setName("Подзадача 3 задачи");
         taskManager.update(subTask3);
         System.out.println(taskManager.returnSubTask(subTask3.getId()));
+        System.out.println(taskManager.returnEpic(epic2.getId()));
+
+        System.out.println("\n" + taskManager.returnAllEpics());
     }
 }

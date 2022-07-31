@@ -1,25 +1,26 @@
+package Tasks;
+
 import java.util.ArrayList;
-
 public class SubTask extends Task {
-    private int supId;
+    private int epicId;
 
-    public SubTask(int id, String name, String description, String status, int supId) {
+    public SubTask(int id, String name, String description, String status, int epicId) {
         super(id, name, description, status);
-        this.supId = supId;
+        this.epicId = epicId;
     }
 
-    public int getSupId() {
-        return supId;
+    public int getEpicId() {
+        return epicId;
     }
 
-    public void setSupId(int supId) {
-        this.supId = supId;
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 
     @Override
     public String toString() {
         return "SubTask{" +
-                "supId=" + supId +
+                "epicId=" + epicId +
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
