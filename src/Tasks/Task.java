@@ -11,7 +11,6 @@ public class Task {
     //я посмотрел что это, к следующему спринту надеюсь получится доделать
     protected String status;
 
-
     public Task(int id, String name, String description, String status) {
         this.id = id;
         this.name = name;
@@ -51,9 +50,11 @@ public class Task {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public String getStatus() {
         return status;
     }
@@ -61,8 +62,6 @@ public class Task {
     public void setStatus(String status) {
         this.status = status;
     }
-
-
 
     @Override
     public String toString() {

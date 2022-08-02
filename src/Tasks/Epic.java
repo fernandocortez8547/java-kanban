@@ -19,7 +19,6 @@ public class Epic extends Task {
         subIds.clear();
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

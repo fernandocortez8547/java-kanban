@@ -14,6 +14,7 @@ public class TaskManager {
     private int idGeneration() {
         return nextId++;
     }
+
     public int add(Task task) {
         task.setId(idGeneration());
         tasks.put(task.getId(), task);
@@ -28,6 +29,7 @@ public class TaskManager {
         }
         return epic.getId();
     }
+
     public int add(SubTask subTask) {
         subTask.setId(idGeneration());
         Epic epic = returnEpic(subTask.getEpicId());
@@ -66,16 +68,15 @@ public class TaskManager {
         }
         return task.getId();
     }
-    public int updateEpicName(Epic epic) {
+
+    public int updateEpicPublicFields(Epic epic) {
         String name = epic.getName();
+        String description = epic.getDescription();
         epics.get(epic.getId()).setName(name);
-        return epic.getId();
-    }
-    public int updateEpicDescription(Epic epic) {
-        String description = epic.getName();
         epics.get(epic.getId()).setDescription(description);
         return epic.getId();
     }
+
     public int update(SubTask subTask) {
         if(subTasks.containsKey(subTask.getId())) {
             subTasks.put(subTask.getId(), subTask);
@@ -88,6 +89,7 @@ public class TaskManager {
         Map<Integer, Task> tasksClone = tasks;
         return tasksClone;
     }
+
     public Task returnTask(int key) {
         Task taskClone = tasks.get(key);
         return taskClone;
@@ -97,10 +99,12 @@ public class TaskManager {
         Map<Integer, Epic> epicClone = epics;
         return epicClone;
     }
+
     public Epic returnEpic (int key) {
         Epic epicClone = epics.get(key);
         return epicClone;
     }
+
     public Map<Integer, SubTask> returnAllSubTasks() {
         Map<Integer, SubTask> subTasksClone = subTasks;
         return subTasksClone;
@@ -114,6 +118,7 @@ public class TaskManager {
         }
         return epicSubTasks;
     }
+
     public SubTask returnSubTask(int key) {
         return subTasks.get(key);
     }
@@ -121,10 +126,12 @@ public class TaskManager {
     public void deleteAllTasks() {
         tasks.clear();
     }
+
     public void deleteAllEpics() {
         epics.clear();
         subTasks.clear();
     }
+
     public void deleteAllSubTasks() {
         subTasks.clear();
         for(int EpicId : epics.keySet()) {
@@ -133,9 +140,11 @@ public class TaskManager {
             updateStatus(EpicId);
         }
     }
+
     public void deleteTask(int taskId) {
         tasks.remove(taskId);
     }
+
     public void deleteEpic(int EpicId) {
         epics.remove(EpicId);
         for(int i : subTasks.keySet()) {
@@ -145,6 +154,7 @@ public class TaskManager {
             }
         }
     }
+
     public void deleteSubEpics(int subId) {
         for(SubTask s : subTasks.values()) {
             if(s.getEpicId() == subId) {

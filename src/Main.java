@@ -55,18 +55,20 @@ public class Main {
 
 
         //Изменение имени эпика
-        Epic epic2 = new Epic(0, "Задача 3", "Описание", "new");
+        Epic epic2 = new Epic(0, "Задача 36546", "Описание", "new");
         taskManager.add(epic2);
         System.out.println(taskManager.returnEpic(epic2.getId()));
         epic2.setName("Задача 3.1");
-        taskManager.updateEpicName(epic2);
+        epic2.setDescription("Описание 3");
+        taskManager.updateEpicPublicFields(epic2);
         System.out.println(taskManager.returnEpic(epic2.getId()));
 
-        //Изменение имени подзадачи
+        //Изменение статуса подзадачи
         SubTask subTask3 = new SubTask(0, "Подзадача 1", "Описание", "new", epic2.getId());
         taskManager.add(subTask3);
         System.out.println(taskManager.returnSubTask(subTask3.getId()));
         subTask3.setName("Подзадача 3 задачи");
+        subTask3.setStatus("inProgress");
         taskManager.update(subTask3);
         System.out.println(taskManager.returnSubTask(subTask3.getId()));
         System.out.println(taskManager.returnEpic(epic2.getId()));
