@@ -3,9 +3,6 @@ import Tasks.*;
 import java.util.*;
 public class TaskManager {
     private static int nextId = 1;
-    //Пока нигде не упоминали инт-сы(как и вообщем эту тему) хэш мапы и от кого хэш мапа реализуется,
-    //насчет полиморфных свойств тоже пока поверхностное представление из других источников,
-    //по поводу List задали Вы мне задачку) вообщем сделал ссылку на инт-с Map. Надеюсь верно
 
     private Map<Integer, Epic> epics =  new HashMap<>();
     private Map<Integer, SubTask> subTasks = new HashMap<>();
@@ -85,36 +82,61 @@ public class TaskManager {
         return subTask.getId();
     }
 
-    public Map<Integer, Task> returnAllTasks() {
-        Map<Integer, Task> tasksClone = tasks;
-        return tasksClone;
+    public List<Task> returnAllTasks() {
+        List<Task> taskList = new ArrayList<>();
+        for(int key : tasks.keySet()) {
+            taskList.add(tasks.get(key));
+        }
+        return taskList;
     }
 
     public Task returnTask(int key) {
-        Task taskClone = tasks.get(key);
-        return taskClone;
+        Task task = null;
+        try {
+            task = (Task) tasks.get(key).clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.out.print("id " + key + " ");
+        }
+        return task;
     }
-    //надеюсь это правильная реализация, тут всего лишь ссылка, не разобрался в интернете как пользоваться clone()
-    public Map<Integer, Epic> returnAllEpics() {
-        Map<Integer, Epic> epicClone = epics;
-        return epicClone;
+
+    public List<Epic> returnAllEpics() {
+        List<Epic> epicList = new ArrayList<>();
+        for(int id : epics.keySet()) {
+            epicList.add(epics.get(id));
+        }
+        return epicList;
     }
 
     public Epic returnEpic (int key) {
-        Epic epicClone = epics.get(key);
-        return epicClone;
+        Epic epic = null;
+        try {
+            epic = (Epic) epics.get(key).clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.out.print("id " + key + " ");
+        }
+        return epic;
     }
 
-    public Map<Integer, SubTask> returnAllSubTasks() {
-        Map<Integer, SubTask> subTasksClone = subTasks;
-        return subTasksClone;
+    public List<SubTask> returnAllSubTasks() {
+        List<SubTask> subTaskList = new ArrayList<>();
+
+        for(int id : subTasks.keySet()) {
+            subTaskList.add(subTasks.get(id));
+        }
+        return subTaskList;
     }
-    // этот метод возвращает все подзадачи конкретного эпика
-    public Map<Integer, SubTask> returnEpicSubTasks(int epicId) {
-        Map<Integer, SubTask> epicSubTasks = new HashMap<>();
+
+    public List<SubTask> returnEpicSubTasks(int epicId) {
+        List<SubTask> epicSubTasks = new ArrayList<>();
         List<Integer> subIds = epics.get(epicId).getSubIds();
+
         for(int key : subIds) {
-            epicSubTasks.put(key, subTasks.get(key));
+            epicSubTasks.add(subTasks.get(key));
         }
         return epicSubTasks;
     }

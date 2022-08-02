@@ -3,12 +3,11 @@ package Tasks;
 import java.util.Objects;
 
 
-public class Task {
+public class Task implements Cloneable{
     protected int id;
     protected String name;
     protected String description;
-    //пока нет времени бежать впереди паровоза с enum, пока про это нигде не упоминали
-    //я посмотрел что это, к следующему спринту надеюсь получится доделать
+    //enum
     protected String status;
 
     public Task(int id, String name, String description, String status) {
@@ -16,6 +15,11 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     @Override

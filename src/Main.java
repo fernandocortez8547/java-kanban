@@ -11,7 +11,7 @@ public class Main {
                 "Описание",
                 "new");
         taskManager.add(task);
-
+        System.out.println(taskManager.returnTask(50));
         System.out.println(taskManager.returnTask(task.getId()) + "\n");
         //Создание одного эпика с двумя подзадачами.Эпик:
         Epic epic = new Epic(0,
