@@ -30,7 +30,7 @@ public class TaskManager {
     public int add(SubTask subTask) {
         subTask.setId(idGeneration());
         Epic epic = returnEpic(subTask.getEpicId());
-        epic.setSubIds(subTask.getId());
+        epic.addSubTaskId(subTask.getId());
         subTasks.put(subTask.getId(), subTask);
         updateStatus(subTask.getEpicId());
         return subTask.getId();
@@ -97,7 +97,7 @@ public class TaskManager {
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            System.out.print("id " + key + " ");
+            System.out.print("id " + key + " - ");
         }
         return task;
     }
@@ -117,7 +117,7 @@ public class TaskManager {
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            System.out.print("id " + key + " ");
+            System.out.print("id " + key + " - ");
         }
         return epic;
     }
@@ -138,11 +138,23 @@ public class TaskManager {
         for(int key : subIds) {
             epicSubTasks.add(subTasks.get(key));
         }
+        if(epicSubTasks.size() == 0) {
+            return null;
+        }
         return epicSubTasks;
     }
 
+    //тут попробовал сделать копию, не знаю верно или нет) ссылка то теперь на клон
     public SubTask returnSubTask(int key) {
-        return subTasks.get(key);
+        SubTask subTask = null;
+        try {
+            subTask = (SubTask) subTasks.get(key).clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.out.print("id " + key + " - ");
+        }
+        return subTask;
     }
 
     public void deleteAllTasks() {
@@ -177,13 +189,15 @@ public class TaskManager {
         }
     }
 
-    public void deleteSubEpics(int subId) {
-        for(SubTask s : subTasks.values()) {
-            if(s.getEpicId() == subId) {
-                subTasks.remove(subId);
-            }
+    public void deleteSubTask(int subTaskId) {
+        int epicId = subTasks.get(subTaskId).getEpicId();
+        for(int id : subTasks.keySet()) {
+                if(id == subTaskId) {
+                    epics.get(epicId).deleteSubTaskId(id);
+                    subTasks.remove(subTaskId);
+                }
         }
-        updateStatus(subId);
+        updateStatus(epicId);
     }
 }
 

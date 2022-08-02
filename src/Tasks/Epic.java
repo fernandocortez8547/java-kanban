@@ -1,20 +1,29 @@
 package Tasks;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private ArrayList<Integer> subIds;
+    private List<Integer> subIds;
 
     public Epic(int id, String name, String description, String status) {
         super(id, name, description, status);
         subIds = new ArrayList<>();
     }
 
-    public void setSubIds(int id) {
+    //этот момент почему то упустил - исправил
+    public void addSubTaskId(int id) {
         subIds.add(id);
     }
 
+    public void deleteSubTaskId(int id) {
+        for(int i = 0; i<subIds.size(); i++) {
+            if(subIds.get(i) == id) {
+                subIds.remove(i);
+            }
+        }
+    }
     public void deleteSubIds() {
         subIds.clear();
     }
@@ -33,7 +42,7 @@ public class Epic extends Task {
         return Objects.hash(super.hashCode(), subIds);
     }
 
-    public ArrayList<Integer> getSubIds() {
+    public List<Integer> getSubIds() {
         return subIds;
     }
 

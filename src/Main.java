@@ -3,7 +3,6 @@ import Tasks.*;
 import Manager.*;
 public class Main {
     public static void main(String[] args) {
-        //Наставник сказал, что проверки неправильного ввода не предусмотрено этой программой, потому что мы в них утоним ¯\_(ツ)_/¯
         TaskManager taskManager = new TaskManager();
         //создание простой задачи
         Task task = new Task(0,
@@ -72,7 +71,10 @@ public class Main {
         taskManager.update(subTask3);
         System.out.println(taskManager.returnSubTask(subTask3.getId()));
         System.out.println(taskManager.returnEpic(epic2.getId()));
+        taskManager.deleteSubTask(subTask3.getId());
+        System.out.println(taskManager.returnEpicSubTasks(epic2.getId()));
 
         System.out.println("\n" + taskManager.returnAllEpics());
+
     }
 }
