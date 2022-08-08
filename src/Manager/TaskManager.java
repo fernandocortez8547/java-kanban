@@ -44,9 +44,9 @@ public class TaskManager {
         for(int i : subIds) {
             if(subTasks.containsKey(i)) {
                 SubTask s = subTasks.get(i);
-                if(s.getEpicId() == epicId && s.getStatus().equals("new")) {
+                if(s.getEpicId() == epicId && s.getStatus().equals(TaskStatus.NEW)) {
                     curNew++;
-                } else if(s.getEpicId() == epicId && s.getStatus().equals("done")) {
+                } else if(s.getEpicId() == epicId && s.getStatus().equals(TaskStatus.DONE)) {
                     curDone++;
                 }
             }
