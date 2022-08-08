@@ -3,14 +3,14 @@ package Tasks;
 import java.util.Objects;
 
 
-public class Task implements Cloneable{
+public class Task implements Cloneable {
     protected int id;
     protected String name;
     protected String description;
     //enum
-    protected String status;
+    protected TaskStatus status;
 
-    public Task(int id, String name, String description, String status) {
+    public Task(int id, String name, String description, TaskStatus status) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -59,11 +59,11 @@ public class Task implements Cloneable{
         this.id = id;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 

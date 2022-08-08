@@ -22,7 +22,7 @@ public class TaskManager {
         epic.setId(idGeneration());
         epics.put(epic.getId(), epic);
         if(epic.getSubIds().size() == 0) {
-            epic.setStatus("new");
+            epic.setStatus(TaskStatus.NEW);
         }
         return epic.getId();
     }
@@ -53,10 +53,10 @@ public class TaskManager {
         }
 
         if(epic.getSubIds().size() == 0 || epic.getSubIds().size() == curNew) {
-            epic.setStatus("new");
+            epic.setStatus(TaskStatus.NEW);
         } else if(epic.getSubIds().size() == curDone) {
-            epic.setStatus("done");
-        } else epic.setStatus("inProgress");
+            epic.setStatus(TaskStatus.DONE);
+        } else epic.setStatus(TaskStatus.IN_PROGRESS);
     }
 
     public int update(Task task) {
