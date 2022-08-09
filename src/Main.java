@@ -1,9 +1,8 @@
-import java.util.Scanner;
 import Tasks.*;
 import Manager.*;
 public class Main {
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
         //создание простой задачи
         Task task = new Task(0,
                 "Простая задача",
@@ -59,7 +58,7 @@ public class Main {
         System.out.println(taskManager.returnEpic(epic2.getId()));
         epic2.setName("Задача 3.1");
         epic2.setDescription("Описание 3");
-        taskManager.updateEpicPublicFields(epic2);
+        taskManager.update(epic2);
         System.out.println(taskManager.returnEpic(epic2.getId()));
 
         //Изменение статуса подзадачи
