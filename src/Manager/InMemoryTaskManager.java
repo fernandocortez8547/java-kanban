@@ -7,6 +7,7 @@ public class InMemoryTaskManager implements TaskManager{
     private Map<Integer, Epic> epics =  new HashMap<>();
     private Map<Integer, SubTask> subTasks = new HashMap<>();
     private Map<Integer, Task> tasks = new HashMap<>();
+    private List<Task> historyList= new ArrayList<>();
 
     private int idGeneration() {
         return nextId++;
@@ -32,7 +33,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public int add(SubTask subTask) {
         subTask.setId(idGeneration());
-        Epic epic = returnEpic(subTask.getEpicId());
+        Epic epic = getEpic(subTask.getEpicId());
         epic.addSubTaskId(subTask.getId());
         subTasks.put(subTask.getId(), subTask);
         updateStatus(subTask.getEpicId());
@@ -89,7 +90,19 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public List<Task> returnAllTasks() {
+    public List<Task> getHistory (){
+        if(historyList.size() > 10) {
+            for(int i = historyList.size(); i>=0; i--) {
+                if((i+1) < (historyList.size()-10)) {
+                    historyList.remove(i);
+                }
+            }
+        }
+        return historyList;
+    }
+
+    @Override
+    public List<Task> getAllTasks() {
         List<Task> taskList = new ArrayList<>();
         for(int key : tasks.keySet()) {
             taskList.add(tasks.get(key));
@@ -98,20 +111,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public Task returnTask(int key) {
-        Task task = null;
-        try {
-            task = (Task) tasks.get(key).clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            System.out.print("id " + key + " - ");
-        }
-        return task;
-    }
-
-    @Override
-    public List<Epic> returnAllEpics() {
+    public List<Epic> getAllEpics() {
         List<Epic> epicList = new ArrayList<>();
         for(int id : epics.keySet()) {
             epicList.add(epics.get(id));
@@ -120,20 +120,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public Epic returnEpic (int key) {
-        Epic epic = null;
-        try {
-            epic = (Epic) epics.get(key).clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            System.out.print("id " + key + " - ");
-        }
-        return epic;
-    }
-
-    @Override
-    public List<SubTask> returnAllSubTasks() {
+    public List<SubTask> getAllSubTasks() {
         List<SubTask> subTaskList = new ArrayList<>();
 
         for(int id : subTasks.keySet()) {
@@ -143,7 +130,35 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public List<SubTask> returnEpicSubTasks(int epicId) {
+    public Task getTask(int key) {
+        Task task = null;
+        try {
+            task = (Task) tasks.get(key).clone();
+            historyList.add(task);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.out.print("id " + key + " - ");
+        }
+        return task;
+    }
+
+    @Override
+    public Epic getEpic (int key) {
+        Epic epic = null;
+        try {
+            epic = (Epic) epics.get(key).clone();
+            historyList.add(epic);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.out.print("id " + key + " - ");
+        }
+        return epic;
+    }
+
+    @Override
+    public List<SubTask> getEpicSubTasks(int epicId) {
         List<SubTask> epicSubTasks = new ArrayList<>();
         List<Integer> subIds = epics.get(epicId).getSubIds();
 
@@ -157,10 +172,11 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public SubTask returnSubTask(int key) {
+    public SubTask getSubTask(int key) {
         SubTask subTask = null;
         try {
             subTask = (SubTask) subTasks.get(key).clone();
+            historyList.add(subTask);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
@@ -216,5 +232,6 @@ public class InMemoryTaskManager implements TaskManager{
         }
         updateStatus(epicId);
     }
+
 }
 
