@@ -1,9 +1,12 @@
 package Manager;
 
-import Tasks.Task;
+public class Manager {
 
-public abstract class Manager <T extends Task> {
-    T getDefault() {
-       return T;
+    public static HistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager();
+    }
+
+    public static TaskManager getDefaultTask() {
+        return new InMemoryTaskManager();
     }
 }

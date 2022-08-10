@@ -7,7 +7,7 @@ public class InMemoryTaskManager implements TaskManager{
     private Map<Integer, Epic> epics =  new HashMap<>();
     private Map<Integer, SubTask> subTasks = new HashMap<>();
     private Map<Integer, Task> tasks = new HashMap<>();
-    private List<Task> historyList= new ArrayList<>();
+    private HistoryManager historyManager = Manager.getDefaultHistory();
 
     private int idGeneration() {
         return nextId++;
@@ -91,14 +91,7 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public List<Task> getHistory (){
-        if(historyList.size() > 10) {
-            for(int i = historyList.size(); i>=0; i--) {
-                if((i+1) < (historyList.size()-10)) {
-                    historyList.remove(i);
-                }
-            }
-        }
-        return historyList;
+        return historyManager.getHistory();
     }
 
     @Override
@@ -134,7 +127,7 @@ public class InMemoryTaskManager implements TaskManager{
         Task task = null;
         try {
             task = (Task) tasks.get(key).clone();
-            historyList.add(task);
+            historyManager.add(task);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
@@ -148,7 +141,7 @@ public class InMemoryTaskManager implements TaskManager{
         Epic epic = null;
         try {
             epic = (Epic) epics.get(key).clone();
-            historyList.add(epic);
+            historyManager.add(epic);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
@@ -176,7 +169,7 @@ public class InMemoryTaskManager implements TaskManager{
         SubTask subTask = null;
         try {
             subTask = (SubTask) subTasks.get(key).clone();
-            historyList.add(subTask);
+            historyManager.add(subTask);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
