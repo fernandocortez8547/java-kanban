@@ -17,7 +17,7 @@ public class Epic extends Task {
         subIds.add(id);
     }
 
-    public void deleteSubTaskId(int id) {
+    public void clearingSubTaskId(int id) {
         for(int i = 0; i<subIds.size(); i++) {
             if(subIds.get(i) == id) {
                 subIds.remove(i);

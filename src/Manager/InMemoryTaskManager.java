@@ -31,7 +31,6 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    //исправлено получение эпика, вместо метода getEpic, Эпик находится по ключу в мапе, чтобы не путать HistoryManager
     public int add(SubTask subTask) {
         subTask.setId(idGeneration());
         Epic epic = epics.get(subTask.getEpicId()); //getEpic(subTask.getEpicId());
@@ -180,17 +179,17 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void deleteAllTasks() {
+    public void clearingTasks() {
         tasks.clear();
     }
 
-    public void deleteAllEpics() {
+    public void clearingEpics() {
         epics.clear();
         subTasks.clear();
     }
 
     @Override
-    public void deleteAllSubTasks() {
+    public void clearingSubTasks() {
         subTasks.clear();
         for(int EpicId : epics.keySet()) {
             Epic epic = epics.get(EpicId);
@@ -200,12 +199,12 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void deleteTask(int taskId) {
+    public void removeTask(int taskId) {
         tasks.remove(taskId);
     }
 
     @Override
-    public void deleteEpic(int EpicId) {
+    public void removeEpic(int EpicId) {
         epics.remove(EpicId);
         for(int i : subTasks.keySet()) {
             SubTask s = subTasks.get(i);
@@ -216,11 +215,11 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public void deleteSubTask(int subTaskId) {
+    public void removeSubTask(int subTaskId) {
         int epicId = subTasks.get(subTaskId).getEpicId();
         for(int id : subTasks.keySet()) {
             if(id == subTaskId) {
-                epics.get(epicId).deleteSubTaskId(id);
+                epics.get(epicId).clearingSubTaskId(id);
                 subTasks.remove(subTaskId);
             }
         }

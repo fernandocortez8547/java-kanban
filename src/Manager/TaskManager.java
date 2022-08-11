@@ -33,15 +33,15 @@ public interface TaskManager {
 
     SubTask getSubTask(int key);
 
-    void deleteAllTasks();
+    void clearingTasks();
 
-    void deleteAllEpics();
+    void clearingEpics();
 
-    void deleteAllSubTasks();
+    void clearingSubTasks();
 
-    void deleteTask(int taskId);
+    void removeTask(int taskId);
 
-    void deleteEpic(int EpicId);
+    void removeEpic(int EpicId);
 
-    void deleteSubTask(int subTaskId);
+    void removeSubTask(int subTaskId);
 }

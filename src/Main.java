@@ -68,7 +68,7 @@ public class Main {
         subTask3.setName("Подзадача 3 задачи");
         subTask3.setStatus(TaskStatus.IN_PROGRESS);
         taskManager.update(subTask3);
-        taskManager.deleteSubTask(subTask3.getId());
+        taskManager.removeSubTask(subTask3.getId());
 
         //Проверка истории
 
