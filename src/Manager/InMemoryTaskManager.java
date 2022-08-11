@@ -31,9 +31,10 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
+    //исправлено получение эпика, вместо метода getEpic, Эпик находится по ключу в мапе, чтобы не путать HistoryManager
     public int add(SubTask subTask) {
         subTask.setId(idGeneration());
-        Epic epic = getEpic(subTask.getEpicId());
+        Epic epic = epics.get(subTask.getEpicId()); //getEpic(subTask.getEpicId());
         epic.addSubTaskId(subTask.getId());
         subTasks.put(subTask.getId(), subTask);
         updateStatus(subTask.getEpicId());

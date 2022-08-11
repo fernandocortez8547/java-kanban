@@ -79,22 +79,23 @@ public class Main {
         taskManager.getSubTask(subTask.getId());
         taskManager.getSubTask(subTask1.getId());
         taskManager.getSubTask(subTask2.getId());
-        taskManager.getSubTask(subTask3.getId());
         taskManager.getSubTask(subTask1.getId());
         taskManager.getSubTask(subTask2.getId());
-        taskManager.getSubTask(subTask3.getId());
+        taskManager.getSubTask(subTask2.getId());
+        taskManager.getSubTask(subTask2.getId());
 
 
         List<Task> history = taskManager.getHistory();
         for (int i = 0; i < history.size(); i++) {
             Task task100 = history.get(i);
-            System.out.println(i + ". " + task100);
+            System.out.println((i+1) + ". " + task100);
         }
         Task task101 = new Task(15, "task101 1", "task101 description", TaskStatus.NEW);
         taskManager.add(task101);
         taskManager.getTask(task101.getId());
         history = taskManager.getHistory();
         System.out.println("New task task101 : ");
+
         for (int i = 0; i < history.size(); i++) {
             Task task100 = history.get(i);
             System.out.println((i+1) + ". " + task100);
