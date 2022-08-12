@@ -68,15 +68,10 @@ public class Main {
         subTask3.setName("Подзадача 3 задачи");
         subTask3.setStatus(TaskStatus.IN_PROGRESS);
         taskManager.update(subTask3);
-//        taskManager.removeSubTask(subTask3.getId());
 
         //Проверка истории
 
-        List<Epic> l= taskManager.getAllEpics();
-        List<SubTask> allSubTasks = taskManager.getAllSubTasks();
-        System.out.println(allSubTasks);
-
-        /*taskManager.getTask(task.getId());
+        taskManager.getTask(task.getId());
         taskManager.getEpic(epic.getId());
         taskManager.getEpic(epic1.getId());
         taskManager.getEpic(epic2.getId());
@@ -87,7 +82,6 @@ public class Main {
         taskManager.getSubTask(subTask2.getId());
         taskManager.getSubTask(subTask2.getId());
         taskManager.getSubTask(subTask2.getId());
-
 
         List<Task> history = taskManager.getHistory();
         for (int i = 0; i < history.size(); i++) {
@@ -103,6 +97,7 @@ public class Main {
         for (int i = 0; i < history.size(); i++) {
             Task task100 = history.get(i);
             System.out.println((i+1) + ". " + task100);
-        }*/
+        }
+
     }
 }

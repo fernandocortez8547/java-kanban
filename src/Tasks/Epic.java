@@ -12,19 +12,18 @@ public class Epic extends Task {
         subIds = new ArrayList<>();
     }
 
-    //этот момент почему то упустил - исправил
     public void addSubTaskId(int id) {
         subIds.add(id);
     }
 
-    public void clearingSubTaskId(int id) {
-        for(int i = 0; i<subIds.size(); i++) {
-            if(subIds.get(i) == id) {
-                subIds.remove(i);
-            }
+    //убрал удаление через цикл, я забыл что можно передать обьект в remove
+    public void removeSubTaskId(Integer id) {
+        if (subIds.contains(id)) {
+            subIds.remove(id);
         }
     }
-    public void deleteSubIds() {
+
+    public void clearingSubIds() {
         subIds.clear();
     }
 
