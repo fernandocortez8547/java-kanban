@@ -20,6 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
     public int add(Task task) {
         task.setId(idGeneration());
         tasks.put(task.getId(), task);
+
         return task.getId();
     }
 
