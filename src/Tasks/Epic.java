@@ -16,7 +16,6 @@ public class Epic extends Task {
         subIds.add(id);
     }
 
-    //убрал удаление через цикл, я забыл что можно передать обьект в remove
     public void removeSubTaskId(Integer id) {
         if (subIds.contains(id)) {
             subIds.remove(id);
