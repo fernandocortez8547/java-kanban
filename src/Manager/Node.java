@@ -1,11 +1,11 @@
 package Manager;
 
-class Node<Task> {
-    Task data;
+class Node<T> {
+    T data;
     Node next;
     Node prev;
 
-    public Node(Node prev, Task data, Node next) {
+    public Node(Node prev, T data, Node next) {
         this.data = data;
         this.next = next;
         this.prev = prev;

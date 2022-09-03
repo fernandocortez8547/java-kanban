@@ -12,9 +12,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     Node<Task> head;
     Node<Task> tail;
     Map<Integer, Node<Task>> idNode = new HashMap<>();
-    private List<Task> historyList = new ArrayList<>();
 
-    int size = 0;
 
     @Override
     public void add(Task task) {
@@ -30,7 +28,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        historyList.clear();
+        List<Task> historyList = new ArrayList<>();
         Node<Task> taskNode = head;
 
         while(taskNode != null) {
@@ -44,6 +42,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void remove(int id) {
         removeNode(idNode.get(id));
+        idNode.remove(id);
     }
 
     //Дальше идёт реализация двусвязного списка
@@ -57,7 +56,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             head = tail;
         else
             oldTail.next = tail;
-        size++;
 
         return tail;
     }
@@ -68,11 +66,9 @@ public class InMemoryHistoryManager implements HistoryManager {
                 if(taskNode.next != null) {
                     taskNode.next.prev = null;
                     head = taskNode.next;
-                    size--;
                 } else {
                     head = null;
                     tail = null;
-                    size = 0;
                 }
             }
 
@@ -83,7 +79,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                 } else {
                     head = null;
                     tail = null;
-                    size = 0;
                 }
             }
 
