@@ -12,7 +12,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     Node<Task> head;
     Node<Task> tail;
     Map<Integer, Node<Task>> idNode = new HashMap<>();
-
+    static int size = 0;
 
     @Override
     public void add(Task task) {
@@ -21,9 +21,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             remove(task.getId());
         }
 
-        if(task != null) {
-            idNode.put(task.getId(),linkLast(task));
-        }
+        idNode.put(task.getId(),linkLast(task));
     }
 
     @Override
@@ -39,13 +37,22 @@ public class InMemoryHistoryManager implements HistoryManager {
         return historyList;
     }
 
+    public int[] getIdsFromHistory() {
+        int[] historyArray = new int[size];
+        Node<Task> taskNode = head;
+
+        for(int i = 0; i < size; i++) {
+            historyArray[i] = taskNode.data.getId();
+            taskNode = taskNode.next;
+        }
+        return historyArray;
+    }
+
     @Override
     public void remove(int id) {
         removeNode(idNode.get(id));
         idNode.remove(id);
     }
-
-    //Дальше идёт реализация двусвязного списка
 
     private Node<Task> linkLast(Task e) {
 
@@ -56,6 +63,8 @@ public class InMemoryHistoryManager implements HistoryManager {
             head = tail;
         else
             oldTail.next = tail;
+
+        size++;
 
         return tail;
     }
@@ -86,6 +95,8 @@ public class InMemoryHistoryManager implements HistoryManager {
                 taskNode.prev.next = taskNode.next;
                 taskNode.next.prev = taskNode.prev;
             }
+
+            size--;
         }
 }
 

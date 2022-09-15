@@ -7,10 +7,10 @@ import java.util.*;
 public class InMemoryTaskManager implements TaskManager {
     private static int nextId = 1;
 
-    private Map<Integer, Epic> epics = new HashMap<>();
-    private Map<Integer, SubTask> subTasks = new HashMap<>();
-    private Map<Integer, Task> tasks = new HashMap<>();
-    private HistoryManager historyManager = Manager.getDefaultHistory();
+    protected Map<Integer, Epic> epics = new HashMap<>();
+    protected Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected Map<Integer, Task> tasks = new HashMap<>();
+    protected HistoryManager historyManager = Manager.getDefaultHistory();
 
     private int idGeneration() {
         return nextId++;
@@ -18,6 +18,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int add(Task task) {
+        //при добавлении одного и того же элемента влияло на id
+        if(tasks.containsValue(task)) {
+            return 0;
+        }
         task.setId(idGeneration());
         tasks.put(task.getId(), task);
 
@@ -26,6 +30,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int add(Epic epic) {
+        if(epics.containsValue(epic)) {
+            return 0;
+        }
         epic.setId(idGeneration());
         epics.put(epic.getId(), epic);
         if (epic.getSubIds().size() == 0) {
@@ -36,6 +43,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int add(SubTask subTask) {
+        if(subTasks.containsValue(subTask)) {
+            return 0;
+        }
         subTask.setId(idGeneration());
         Epic epic = epics.get(subTask.getEpicId()); //getEpic(subTask.getEpicId());
         epic.addSubTaskId(subTask.getId());

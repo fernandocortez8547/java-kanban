@@ -1,0 +1,4 @@
+id,type,name,status,description,epic
+1,TASK,Какая-то задача,NEW,NEW,
+2,EPIC,Epic name,NEW,NEW
+
