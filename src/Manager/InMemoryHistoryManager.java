@@ -12,6 +12,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     Node<Task> head;
     Node<Task> tail;
     Map<Integer, Node<Task>> idNode = new HashMap<>();
+
     static int size = 0;
 
     @Override
@@ -23,6 +24,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         idNode.put(task.getId(),linkLast(task));
     }
+
+
 
     @Override
     public List<Task> getHistory() {
@@ -37,6 +40,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return historyList;
     }
 
+    @Override
     public int[] getIdsFromHistory() {
         int[] historyArray = new int[size];
         Node<Task> taskNode = head;
@@ -47,6 +51,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         return historyArray;
     }
+
 
     @Override
     public void remove(int id) {

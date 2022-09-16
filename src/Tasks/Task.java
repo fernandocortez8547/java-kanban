@@ -69,9 +69,12 @@ public class Task implements Cloneable {
 
     @Override
     public String toString() {
-        return id +
-                "," + name + "," + description +
-                "," + status;
+        return "Task{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                '}';
     }
 }
 
