@@ -13,18 +13,16 @@ public class InMemoryHistoryManager implements HistoryManager {
     Node<Task> tail;
     Map<Integer, Node<Task>> idNode = new HashMap<>();
 
-    static int size = 0;
 
     @Override
     public void add(Task task) {
 
-        if(idNode.containsKey(task.getId())) {
+        if (idNode.containsKey(task.getId())) {
             remove(task.getId());
         }
 
-        idNode.put(task.getId(),linkLast(task));
+        idNode.put(task.getId(), linkLast(task));
     }
-
 
 
     @Override
@@ -32,7 +30,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         List<Task> historyList = new ArrayList<>();
         Node<Task> taskNode = head;
 
-        while(taskNode != null) {
+        while (taskNode != null) {
             historyList.add(taskNode.data);
             taskNode = taskNode.next;
         }
@@ -42,10 +40,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public int[] getIdsFromHistory() {
-        int[] historyArray = new int[size];
+        int[] historyArray = new int[idNode.size()];
         Node<Task> taskNode = head;
 
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < idNode.size(); i++) {
             historyArray[i] = taskNode.data.getId();
             taskNode = taskNode.next;
         }
@@ -64,44 +62,42 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node<Task> oldTail = tail;
         tail = new Node<Task>(oldTail, e, null);
 
-        if(head == null)
+        if (head == null)
             head = tail;
         else
             oldTail.next = tail;
 
-        size++;
 
         return tail;
     }
 
     private void removeNode(Node<Task> taskNode) {
 
-            if(taskNode.prev == null) {
-                if(taskNode.next != null) {
-                    taskNode.next.prev = null;
-                    head = taskNode.next;
-                } else {
-                    head = null;
-                    tail = null;
-                }
+        if (taskNode.prev == null) {
+            if (taskNode.next != null) {
+                taskNode.next.prev = null;
+                head = taskNode.next;
+            } else {
+                head = null;
+                tail = null;
             }
-
-            if (taskNode.next == null) {
-                if(taskNode.prev != null) {
-                    taskNode.prev.next = null;
-                    tail = taskNode.prev;
-                } else {
-                    head = null;
-                    tail = null;
-                }
-            }
-
-            if(taskNode.prev != null && taskNode.next != null) {
-                taskNode.prev.next = taskNode.next;
-                taskNode.next.prev = taskNode.prev;
-            }
-
-            size--;
         }
+
+        if (taskNode.next == null) {
+            if (taskNode.prev != null) {
+                taskNode.prev.next = null;
+                tail = taskNode.prev;
+            } else {
+                head = null;
+                tail = null;
+            }
+        }
+
+        if (taskNode.prev != null && taskNode.next != null) {
+            taskNode.prev.next = taskNode.next;
+            taskNode.next.prev = taskNode.prev;
+        }
+
+    }
 }
 

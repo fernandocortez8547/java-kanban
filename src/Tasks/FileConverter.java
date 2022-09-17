@@ -6,27 +6,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FileToString {
+public class FileConverter {
 
-    private FileToString() {
+    private FileConverter() {
     }
 
     public static String toString(Task task) {
-        return String.format(
-                "%s,%s,%s,%s,%s", task.getId(), typeConverter(task), task.getName(), task.getStatus(), task.getDescription()
-        );
-    }
+        if(task instanceof SubTask) {
+            SubTask subTask = (SubTask) task;
+            return String.format(
+                    "%d,%s,%s,%s,%s,%d", subTask.getId(), typeConverter(subTask), subTask.getName(),
+                    subTask.getStatus(), subTask.getDescription(), subTask.getEpicId()
+            );
+        } else if (task instanceof Epic) {
+            Epic epic = (Epic) task;
+            return String.format(
+                    "%d,%s,%s,%s,%s", epic.getId(), typeConverter(epic), epic.getName(), epic.getStatus(),
+                    epic.getDescription()
+            );
+        }
 
-    public static String toString(Epic epic) {
         return String.format(
-                "%s,%s,%s,%s,%s", epic.getId(), typeConverter(epic), epic.getName(), epic.getStatus(), epic.getDescription()
-        );
-    }
-
-    public static String toString(SubTask subTask) {
-        return String.format(
-                "%s,%s,%s,%s,%s,%s", subTask.getId(), typeConverter(subTask), subTask.getName(), subTask.getStatus(),
-                subTask.getDescription(), subTask.getEpicId()
+                "%d,%s,%s,%s,%s", task.getId(), typeConverter(task), task.getName(), task.getStatus(),
+                task.getDescription()
         );
     }
 
@@ -51,15 +53,20 @@ public class FileToString {
     public static List<Integer> historyFromString(String value) {
         String[] historyString = value.split(",");
         List<Integer> historyIds = new ArrayList<>();
-        for (int i = 0; i < historyString.length; i++) {
-            historyIds.add(Integer.parseInt(historyString[i].trim()));
+        for (String s : historyString) {
+            historyIds.add(Integer.parseInt(s.trim()));
         }
         return historyIds;
     }
 
     public static String historyToString(HistoryManager manager) {
-        String historyString = Arrays.toString(manager.getIdsFromHistory());
-        return historyString.substring(1, (historyString.length() - 1));
+        String historyString;
+
+        if(manager.getIdsFromHistory().length != 0) {
+            historyString = Arrays.toString(manager.getIdsFromHistory());
+            return historyString.substring(1, historyString.length() - 1);
+        }
+        return "";
     }
 
     private static TaskType typeConverter(Task task) {
