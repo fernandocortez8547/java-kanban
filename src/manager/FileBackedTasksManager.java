@@ -1,6 +1,7 @@
-package Manager;
+package manager;
 
-import Tasks.*;
+import tasks.*;
+import util.FileConverter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,16 +20,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     String path;
     static List<String> tasksStringList = new ArrayList<>();
-    static boolean isLoaded;
 
     public FileBackedTasksManager(String path) {
-        isLoaded = true;
         this.path = path;
     }
 
     private FileBackedTasksManager(File file) {
         repairFromFile(file);
-        isLoaded = true;
     }
 
     @Override
@@ -36,11 +34,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         if (super.add(task) == 0) {
             return 0;
         }
-        tasksStringList.add(FileConverter.toString(task));
 
-        if (isLoaded) {
-            save();
-        }
+        tasksStringList.add(FileConverter.toString(task));
+        save();
+
         return task.getId();
     }
 
@@ -49,11 +46,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         if (super.add(epic) == 0) {
             return 0;
         }
-        tasksStringList.add(FileConverter.toString(epic));
 
-        if (isLoaded) {
-            save();
-        }
+        tasksStringList.add(FileConverter.toString(epic));
+        save();
+
         return epic.getId();
     }
 
@@ -62,29 +58,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         if (super.add(subtask) == 0) {
             return 0;
         }
-        tasksStringList.add(FileConverter.toString(subtask));
 
-        if (isLoaded) {
-            save();
-        }
+        tasksStringList.add(FileConverter.toString(subtask));
+        save();
+
         return subtask.getId();
     }
 
     @Override
     public Task getTask(int id) {
         Task task = super.getTask(id);
-        if (isLoaded) {
-            save();
-        }
+        save();
+
         return task;
     }
 
     @Override
     public Epic getEpic(int id) {
         Epic epic = super.getEpic(id);
-        if (isLoaded) {
-            save();
-        }
+        save();
 
         return epic;
     }
@@ -92,9 +84,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     @Override
     public SubTask getSubTask(int id) {
         SubTask subTask = super.getSubTask(id);
-        if (isLoaded) {
-            save();
-        }
+        save();
+
         return subTask;
     }
 
@@ -140,8 +131,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     public void removeSubTask(int subTaskId) {
         tasksStringList.remove(FileConverter.toString(subTasks.get(subTaskId)));
         super.removeSubTask(subTaskId);
-
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage() + Arrays.toString(e.getStackTrace()));
+        }
     }
 
     @Override
@@ -149,7 +143,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return super.getAllTasks();
     }
 
-    public void save() {
+    public void save() throws ManagerSaveException {
         try (FileWriter writer = new FileWriter(path, StandardCharsets.UTF_8)) {
             writer.write("id,type,name,status,description,epic" + "\n");
             for (int i = 0; i < tasksStringList.size(); i++) {
@@ -166,40 +160,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             } else
                 writer.write("\n" + historyStr);
         } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Ошибка сохранения");
-            } catch (ManagerSaveException saveException) {
-                System.out.println(saveException.getMessage() + Arrays.toString(e.getStackTrace()));
-            }
+            throw new ManagerSaveException("Ошибка сохранения");
         }
     }
 
     public static FileBackedTasksManager loadFromFile(File file) {
-        isLoaded = false;
         return new FileBackedTasksManager(file);
     }
 
 
-    public void repairFromFile(File file){
+    public void repairFromFile(File file) {
+        List<String> lines = new ArrayList<>();
+
         try (BufferedReader bf = new BufferedReader(new FileReader(file))) {
-            List<String> lines = new ArrayList<>();
             while (bf.ready()) {
                 lines.add(bf.readLine());
-            }
-
-            for (int line = 1; line <= (lines.size() - 1); line++) {
-
-                if (lines.get(line).isEmpty()) {
-                    final int nextLine = (line + 1);
-                    if (nextLine != lines.size() && !(lines.get(nextLine).isEmpty())) {
-                        for (int id : FileConverter.historyFromString(lines.get(nextLine))) {
-                            repairHistory(id);
-                        }
-                        break;
-                    }
-                }
-
-                repairManagerFields(FileConverter.fromString(lines.get(line)));
             }
         } catch (IOException e) {
             try {
@@ -208,15 +183,32 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 System.out.println(saveException.getMessage() + Arrays.toString(e.getStackTrace()));
             }
         }
+
+        for (int line = 1; line <= (lines.size() - 1); line++) {
+
+            if (lines.get(line).isEmpty()) {
+                final int nextLine = (line + 1);
+                if (nextLine != lines.size() && !(lines.get(nextLine).isEmpty())) {
+                    for (int id : FileConverter.historyFromString(lines.get(nextLine))) {
+                        repairHistory(id);
+                    }
+                    break;
+                }
+            }
+
+            repairManagerFields(FileConverter.fromString(lines.get(line)));
+        }
     }
 
     private void repairManagerFields(Task task) {
-        if (task instanceof SubTask)
-            add((SubTask) task);
-        else if (task instanceof Epic)
-            add((Epic) task);
+        if (task instanceof SubTask) {
+            subTasks.put(task.getId(), (SubTask) task);
+            Epic epic = epics.get(((SubTask) task).getEpicId());
+            epic.addSubTaskId(epic.getId());
+        } else if (task instanceof Epic)
+            epics.put(task.getId(), (Epic) task);
         else
-            add(task);
+            tasks.put(task.getId(), task);
     }
 
     private void repairHistory(int id) {

@@ -1,8 +1,7 @@
-import Tasks.*;
-import Manager.*;
+import tasks.*;
+import manager.*;
 
 import java.io.File;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -25,8 +24,8 @@ public class Main {
         System.out.println(manager.getAllTasks());
         System.out.println(manager.getHistory());
 
-        manager.removeEpic(epic.getId());
-        manager.removeTask(task.getId());
+//        manager.removeEpic(epic.getId());
+//        manager.removeTask(task.getId());
 
         System.out.println(manager);
     }

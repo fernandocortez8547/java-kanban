@@ -1,6 +1,5 @@
-package Tasks;
+package tasks;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class SubTask extends Task {

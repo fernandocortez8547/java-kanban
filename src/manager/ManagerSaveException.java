@@ -1,6 +1,6 @@
-package Manager;
+package manager;
 
-public class ManagerSaveException extends Throwable{
+public class ManagerSaveException extends RuntimeException {
 
     public ManagerSaveException() {}
 

@@ -1,4 +1,4 @@
-package Manager;
+package manager;
 
 class Node<T> {
     T data;
