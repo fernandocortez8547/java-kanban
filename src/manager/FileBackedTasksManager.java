@@ -177,11 +177,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 lines.add(bf.readLine());
             }
         } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Ошибка записи");
-            } catch (ManagerSaveException saveException) {
-                System.out.println(saveException.getMessage() + Arrays.toString(e.getStackTrace()));
-            }
+            throw new ManagerSaveException("Ошибка записи");
         }
 
         for (int line = 1; line <= (lines.size() - 1); line++) {
