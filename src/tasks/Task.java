@@ -4,7 +4,7 @@ import java.util.Objects;
 
 
 public class Task implements Cloneable {
-    protected int id;
+    protected Integer id = null;
     protected String name;
     protected String description;
     //enum
@@ -51,7 +51,10 @@ public class Task implements Cloneable {
         this.description = description;
     }
 
-    public int getId() {
+    public Integer getId() {
+        if(id == null) {
+            return null;
+        }
         return id;
     }
 

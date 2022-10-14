@@ -1,15 +1,12 @@
 package tests;
 
-import manager.TaskManager;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-import tasks.*;
-
-import tasks.TaskStatus;
-
 import java.util.List;
+
+import manager.TaskManager;
+import tasks.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
@@ -63,7 +60,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(0, epic.getSubIds().size(), "Неверное количество подзадач");
 
         SubTask subTask = getSubtask(epic);
-        final int SubTaskId = taskManager.add(subTask);
+        taskManager.add(subTask);
 
         final List<SubTask> subTasks = taskManager.getEpicSubTasks(epicId);
 
@@ -97,6 +94,24 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
+    public void addEmptyTask() {
+        int taskId = taskManager.add((Task) null);
+        assertEquals(0, taskId);
+    }
+
+    @Test
+    public void addEmptyEpic() {
+        int epicId = taskManager.add((Epic) null);
+        assertEquals(0, epicId);
+    }
+
+    @Test
+    public void addEmptySubTask() {
+        int subTaskId = taskManager.add((SubTask) null);
+        assertEquals(0, subTaskId);
+    }
+
+    @Test
     public void updateTaskStatusToInProgress() {
         Task task = getTask();
         taskManager.add(task);
@@ -127,6 +142,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.add(subTask);
 
         subTask.setStatus(TaskStatus.IN_PROGRESS);
+        taskManager.update(subTask);
 
         assertEquals(TaskStatus.IN_PROGRESS, subTask.getStatus(), "Статус подзадачи не изменился.");
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(), "Статус эпика не изменился.");
@@ -163,11 +179,29 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.add(subTask);
 
         subTask.setStatus(TaskStatus.DONE);
+        taskManager.update(subTask);
 
         assertEquals(TaskStatus.DONE, subTask.getStatus(), "Статус подзадачи не изменился.");
         assertEquals(TaskStatus.DONE, epic.getStatus(), "Статус эпика не изменился.");
     }
 
+    @Test
+    public void updateTaskToUnavailableStatus() {
+        int taskId = taskManager.update((Task) null);
+        assertEquals(0, taskId);
+    }
+
+    @Test
+    public void updateEpicToUnavailableStatus() {
+        int epicId = taskManager.update((Epic) null);
+        assertEquals(0, epicId);
+    }
+
+    @Test
+    public void updateSubTaskToUnavailableStatus() {
+        int subTaskId = taskManager.update((SubTask) null);
+        assertEquals(0, subTaskId);
+    }
     @Test
     public void deleteAllTasks() {
         Task task = getTask();
@@ -201,6 +235,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         taskManager.add(subtask);
         taskManager.clearingEpics();
+        allSubTasks = taskManager.getAllSubTasks();
         assertEquals(0, allSubTasks.size(), "Подзадачи не удаляются.");
 
     }
@@ -237,4 +272,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNull(taskManager.getSubTask(subtaskId), "Подзадача не удаляется.");
     }
 
+    @Test
+    public void deleteNonExistentIdTask() {
+        int taskId = taskManager.removeTask(-1);
+        assertEquals(0, taskId);
+    }
+
+    @Test
+    public void deleteNonExistentIdEpic() {
+        int taskId = taskManager.removeEpic(-1);
+        assertEquals(0, taskId);
+    }
+
+    @Test
+    public void deleteNonExistentIdSubTask() {
+        int subTaskId = taskManager.removeSubTask(-1);
+        assertEquals(0, subTaskId);
+    }
 }

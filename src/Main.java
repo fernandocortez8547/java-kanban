@@ -5,28 +5,24 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
-        FileBackedTasksManager manager = new FileBackedTasksManager("src" + File.separator + "TestFile.csv");
+        TaskManager manager = new InMemoryTaskManager();
 
-        Task task = new Task(0, "Task name", "Task Description", TaskStatus.NEW);
-
-        Epic epic = new Epic(0, "Epic name", "Epic Description", TaskStatus.NEW);
+        Epic epic = new Epic(0, "Epic", "EpicDescription", TaskStatus.NEW);
         manager.add(epic);
 
-        SubTask subTask = new SubTask(0, "SubTask name", "Subtask Description", TaskStatus.NEW, epic.getId());
+        SubTask subTask = new SubTask(0, "Subtask", "SubTask description", TaskStatus.DONE,
+                epic.getId());
+
         manager.add(subTask);
+        manager.clearingEpics();
+        System.out.println(manager.getAllSubTasks());
 
-        manager.add(task);
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager("dsfsdfdsf");
+        Task task = new Task(0, "sdasd", "asdsad", TaskStatus.NEW);
+        fileBackedTasksManager.add(task);
 
-        manager.getEpic(epic.getId());
-        manager.getTask(task.getId());
-        manager.getSubTask(subTask.getId());
-
-        System.out.println(manager.getAllTasks());
-        System.out.println(manager.getHistory());
-
-//        manager.removeEpic(epic.getId());
-//        manager.removeTask(task.getId());
-
-        System.out.println(manager);
+        FileBackedTasksManager newFile = new FileBackedTasksManager("dsfsdfdsf");
+        newFile.repairFromFile(new File("dsfsdfdsf"));
+        System.out.println(newFile.getAllTasks());
     }
 }

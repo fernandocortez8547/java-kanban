@@ -18,19 +18,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int add(Task task) {
-        //при добавлении одного и того же элемента влияло на id
-        if(tasks.containsValue(task)) {
+        if(tasks.containsValue(task) || task == null) {
             return 0;
         }
         task.setId(idGeneration());
         tasks.put(task.getId(), task);
-
+        historyManager.add(task);
         return task.getId();
     }
 
     @Override
     public int add(Epic epic) {
-        if(epics.containsValue(epic)) {
+        if(epics.containsValue(epic) || epic == null) {
             return 0;
         }
         epic.setId(idGeneration());
@@ -38,12 +37,13 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic.getSubIds().size() == 0) {
             epic.setStatus(TaskStatus.NEW);
         }
+        historyManager.add(epic);
         return epic.getId();
     }
 
     @Override
     public int add(SubTask subTask) {
-        if(subTasks.containsValue(subTask)) {
+        if(subTasks.containsValue(subTask) || subTask == null) {
             return 0;
         }
         subTask.setId(idGeneration());
@@ -51,6 +51,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.addSubTaskId(subTask.getId());
         subTasks.put(subTask.getId(), subTask);
         updateStatus(subTask.getEpicId());
+        historyManager.add(subTask);
         return subTask.getId();
     }
 
@@ -79,6 +80,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int update(Task task) {
+        if(task == null) {
+            return 0;
+        }
+
         if (tasks.containsKey(task)) {
             tasks.put(task.getId(), task);
         }
@@ -87,6 +92,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int update(Epic epic) {
+        if(epic == null) {
+            return 0;
+        }
         String name = epic.getName();
         String description = epic.getDescription();
         epics.get(epic.getId()).setName(name);
@@ -96,6 +104,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int update(SubTask subTask) {
+        if(subTask == null) {
+            return 0;
+        }
+
         if (subTasks.containsKey(subTask.getId())) {
             subTasks.put(subTask.getId(), subTask);
         }
@@ -171,12 +183,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<SubTask> getEpicSubTasks(int epicId) {
         List<SubTask> epicSubTasks = new ArrayList<>();
-        if (epicSubTasks.size() != 0) {
             for (int key : epics.get(epicId).getSubIds()) {
                 epicSubTasks.add(subTasks.get(key));
             }
-        } else return null;
-
         return epicSubTasks;
     }
 
@@ -208,31 +217,40 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeTask(int taskId) {
+    public int removeTask(int taskId) {
         if(tasks.containsKey(taskId)) {
             tasks.remove(taskId);
             historyManager.remove(taskId);
+            return taskId;
         }
+
+        return 0;
     }
 
     @Override
-    public void removeEpic(int epicId) {
+    public int removeEpic(int epicId) {
         if (epics.containsKey(epicId)) {
             clearingEpicSubtasks(epicId);
             epics.remove(epicId);
             historyManager.remove(epicId);
+            return epicId;
         }
+
+        return 0;
     }
 
     @Override
-    public void removeSubTask(int subTaskId) {
+    public int removeSubTask(int subTaskId) {
         if (subTasks.containsKey(subTaskId)) {
             int epicId = subTasks.get(subTaskId).getEpicId();
             epics.get(epicId).removeSubTaskId(subTaskId);
             subTasks.remove(subTaskId);
             updateStatus(epicId);
             historyManager.remove(subTaskId);
+            return subTaskId;
         }
+
+        return 0;
     }
 
     private void clearingEpicSubtasks(int epicId) {

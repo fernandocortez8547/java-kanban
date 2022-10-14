@@ -108,34 +108,41 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void removeTask(int taskId) {
-        tasksStringList.remove(FileConverter.toString(tasks.get(taskId)));
-        super.removeTask(taskId);
-        save();
-    }
-
-    @Override
-    public void removeEpic(int epicId) {
-        Epic epic = epics.get(epicId);
-        for (int id : epic.getSubIds()) {
-            tasksStringList.remove(FileConverter.toString(subTasks.get(id)));
-        }
-        tasksStringList.remove(FileConverter.toString(epics.get(epicId)));
-
-        super.removeEpic(epicId);
-
-        save();
-    }
-
-    @Override
-    public void removeSubTask(int subTaskId) {
-        tasksStringList.remove(FileConverter.toString(subTasks.get(subTaskId)));
-        super.removeSubTask(subTaskId);
-        try {
+    public int removeTask(int taskId) {
+            tasksStringList.remove(FileConverter.toString(tasks.get(taskId)));
+            int supTaskId = super.removeTask(taskId);
             save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage() + Arrays.toString(e.getStackTrace()));
-        }
+
+        return supTaskId;
+    }
+
+    @Override
+    public int removeEpic(int epicId) {
+            Epic epic = epics.get(epicId);
+            for (int id : epic.getSubIds()) {
+                tasksStringList.remove(FileConverter.toString(subTasks.get(id)));
+            }
+            tasksStringList.remove(FileConverter.toString(epics.get(epicId)));
+
+            int supEpicId = super.removeEpic(epicId);
+
+            save();
+
+
+            return supEpicId;
+    }
+
+    @Override
+    public int removeSubTask(int subTaskId) {
+            tasksStringList.remove(FileConverter.toString(subTasks.get(subTaskId)));
+            int supSubTaskId = super.removeSubTask(subTaskId);
+            try {
+                save();
+            } catch (ManagerSaveException e) {
+                System.out.println(e.getMessage() + Arrays.toString(e.getStackTrace()));
+            }
+
+            return supSubTaskId;
     }
 
     @Override

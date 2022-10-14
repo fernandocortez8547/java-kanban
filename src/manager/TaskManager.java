@@ -39,9 +39,9 @@ public interface TaskManager {
 
     void clearingSubTasks();
 
-    void removeTask(int taskId);
+    int removeTask(int taskId);
 
-    void removeEpic(int EpicId);
+    int removeEpic(int EpicId);
 
-    void removeSubTask(int subTaskId);
+    int removeSubTask(int subTaskId);
 }

@@ -15,13 +15,17 @@ public class InMemoryHistoryManager implements HistoryManager {
 
 
     @Override
-    public void add(Task task) {
+    public int add(Task task) {
+        if(task == null) {
+            return 0;
+        }
 
         if (idNode.containsKey(task.getId())) {
             remove(task.getId());
         }
-
         idNode.put(task.getId(), linkLast(task));
+
+        return 1;
     }
 
 
@@ -52,9 +56,13 @@ public class InMemoryHistoryManager implements HistoryManager {
 
 
     @Override
-    public void remove(int id) {
+    public int remove(int id) {
+        if(idNode.get(id) == null) {
+            return 0;
+        }
         removeNode(idNode.get(id));
         idNode.remove(id);
+        return id;
     }
 
     private Node<Task> linkLast(Task e) {

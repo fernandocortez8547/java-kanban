@@ -1,0 +1,6 @@
+id,type,name,status,description,epic
+1,TASK,Test addNewTask,NEW,Test addNewTask description,
+2,EPIC,Test addNewEpic,NEW,Test addNewEpic description,
+3,SUBTASK,Test addNewSubtask,NEW,Test addNewSubTask description,2
+
+1, 2, 3
