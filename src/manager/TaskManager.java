@@ -2,6 +2,7 @@ package manager;
 
 import tasks.*;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -44,4 +45,6 @@ public interface TaskManager {
     int removeEpic(int EpicId);
 
     int removeSubTask(int subTaskId);
+
+    Set<Task> getPrioritizedTasks();
 }

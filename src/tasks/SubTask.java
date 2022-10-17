@@ -1,15 +1,16 @@
 package tasks;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class SubTask extends Task {
     private int epicId;
 
-    public SubTask(int id, String name, String description, TaskStatus status, int epicId) {
-        super(id, name, description, status);
+    public SubTask(int id, String name, String description, TaskStatus status, int epicId,
+                   LocalDateTime startTime, long duration) {
+        super(id, name, description, status, startTime, duration);
         this.epicId = epicId;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -32,6 +33,14 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
     @Override
     public String toString() {
         return "SubTask{" +
@@ -40,6 +49,9 @@ public class SubTask extends Task {
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
                 ", epicId=" + epicId +
+                ", startTime='" + startTime + "\'" +
+                ", endTime='" + endTime + "\'" +
+                ", duration='" + duration + "\'" +
                 '}';
     }
 }

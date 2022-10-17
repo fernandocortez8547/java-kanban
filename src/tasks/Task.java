@@ -1,20 +1,51 @@
 package tasks;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import static util.FileConverter.FORMATTER;
 
-public class Task implements Cloneable {
-    protected Integer id = null;
+
+public class Task implements Cloneable, Comparable<Task> {
+    protected int id;
     protected String name;
     protected String description;
-    //enum
     protected TaskStatus status;
 
-    public Task(int id, String name, String description, TaskStatus status) {
+    protected long duration;
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
+
+    public Task(int id, String name, String description, TaskStatus status, LocalDateTime startTime, long duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
+
+        calculateEndTime();
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void calculateEndTime() {
+        endTime = startTime.plusMinutes(duration);
     }
 
     @Override
@@ -51,10 +82,7 @@ public class Task implements Cloneable {
         this.description = description;
     }
 
-    public Integer getId() {
-        if(id == null) {
-            return null;
-        }
+    public int getId() {
         return id;
     }
 
@@ -70,6 +98,14 @@ public class Task implements Cloneable {
         this.status = status;
     }
 
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -77,7 +113,20 @@ public class Task implements Cloneable {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", startTime='" + startTime.format(FORMATTER) + '\'' +
+                ", endTime='" + endTime.format(FORMATTER) + '\'' +
+                ", duration=" + duration +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Task task) {
+        if(getStartTime().isAfter(task.getStartTime())) {
+            return -1;
+        } else if (getStartTime().isBefore(task.getStartTime())) {
+            return 1;
+        }
+        return 0;
     }
 }
 

@@ -1,6 +1,5 @@
 id,type,name,status,description,epic
-1,EPIC,Epic name,NEW,Epic Description,
-2,SUBTASK,SubTask name,NEW,Subtask Description,1,
-3,TASK,Task name,NEW,Task Description
-
-1, 3, 2
+1,EPIC,Epic name,NEW,Epic Description,17.10.2022|14:11:50,17.10.2022|14:11:50,0,
+2,SUBTASK,SubTask name,NEW,Subtask description,1,2022-10-17T15:11:50.437635600,2022-10-17T16:11:50.437635600,60,
+3,SUBTASK,SubTask 2 name,NEW,Subtask description,1,2022-10-17T14:11:50.437635600,2022-10-17T15:11:50.437635600,60,
+4,SUBTASK,SubTask 3 name,NEW,Subtask description,1,2022-10-17T13:11:50.437635600,2022-10-17T14:11:50.437635600,60

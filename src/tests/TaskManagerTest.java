@@ -3,7 +3,9 @@ package tests;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 import manager.TaskManager;
 import tasks.*;
@@ -12,15 +14,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
 
     protected Task getTask() {
-        return new Task(0, "Test addNewTask", "Test addNewTask description", TaskStatus.NEW);
+        return new Task(0, "Test addNewTask", "Test addNewTask description", TaskStatus.NEW,
+                LocalDateTime.now(), 60
+        );
     }
 
     protected Epic getEpic() {
-        return new Epic(0, "Test addNewEpic", "Test addNewEpic description", TaskStatus.NEW);
+        return new Epic(0, "Test addNewEpic", "Test addNewEpic description",
+                TaskStatus.NEW, LocalDateTime.now(), 60
+        );
     }
 
     protected SubTask getSubtask(Epic epic) {
-        return new SubTask(0, "Test addNewSubtask", "Test addNewSubTask description", TaskStatus.NEW, epic.getId());
+        return new SubTask(0, "Test addNewSubtask", "Test addNewSubTask description",
+                TaskStatus.NEW, epic.getId(), LocalDateTime.now(), 60
+        );
     }
 
     @Test

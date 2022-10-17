@@ -11,6 +11,8 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.LocalDateTime;
+
 public class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
     private int nextId = 0;
@@ -25,7 +27,9 @@ public class InMemoryHistoryManagerTest {
     }
 
     protected Task getTask() {
-        return new Task(idGeneration(), "Test addNewTask", "Test addNewTask description", TaskStatus.NEW);
+        return new Task(idGeneration(), "Test addNewTask", "Test addNewTask description",
+                TaskStatus.NEW, LocalDateTime.now(), 60
+        );
     }
 
     @Test

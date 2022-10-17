@@ -3,6 +3,8 @@ package util;
 import manager.HistoryManager;
 import tasks.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,24 +14,29 @@ public class FileConverter {
     private FileConverter() {
     }
 
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm:ss");
+
     public static String toString(Task task) {
         if(task instanceof SubTask) {
             SubTask subTask = (SubTask) task;
             return String.format(
-                    "%d,%s,%s,%s,%s,%d", subTask.getId(), typeConverter(subTask), subTask.getName(),
-                    subTask.getStatus(), subTask.getDescription(), subTask.getEpicId()
+                    "%d,%s,%s,%s,%s,%d,%s,%s,%s", subTask.getId(), typeConverter(subTask), subTask.getName(),
+                    subTask.getStatus(), subTask.getDescription(), subTask.getEpicId(),
+                    subTask.getStartTime().format(FORMATTER), subTask.getEndTime().format(FORMATTER), subTask.getDuration()
             );
         } else if (task instanceof Epic) {
             Epic epic = (Epic) task;
             return String.format(
-                    "%d,%s,%s,%s,%s", epic.getId(), typeConverter(epic), epic.getName(), epic.getStatus(),
-                    epic.getDescription()
+                    "%d,%s,%s,%s,%s,%s,%s,%s", epic.getId(), typeConverter(epic), epic.getName(), epic.getStatus(),
+                    epic.getDescription(), epic.getStartTime().format(FORMATTER),
+                    epic.getEndTime().format(FORMATTER), epic.getDuration()
             );
         }
 
         return String.format(
-                "%d,%s,%s,%s,%s", task.getId(), typeConverter(task), task.getName(), task.getStatus(),
-                task.getDescription()
+                "%d,%s,%s,%s,%s,%s,%s,%s", task.getId(), typeConverter(task), task.getName(), task.getStatus(),
+                task.getDescription(), task.getStartTime().format(FORMATTER),
+                task.getEndTime().format(FORMATTER), task.getDuration()
         );
     }
 
@@ -42,13 +49,19 @@ public class FileConverter {
                     str[2],
                     str[4],
                     statusConverter(str[3]),
-                    Integer.parseInt(str[5])
+                    Integer.parseInt(str[5]),
+                    LocalDateTime.parse(str[6], FORMATTER),
+                    Integer.parseInt(str[8])
             );
         } else if (str[1].equals("EPIC")) {
-            return new Epic(Integer.parseInt(str[0]), str[2], str[4], statusConverter(str[3]));
+            return new Epic(Integer.parseInt(str[0]), str[2], str[4], statusConverter(str[3]),
+                    LocalDateTime.parse(str[5]), Integer.parseInt(str[6])
+            );
         }
 
-        return new Task(Integer.parseInt(str[0]), str[2], str[4], statusConverter(str[3]));
+        return new Task(Integer.parseInt(str[0]), str[2], str[4], statusConverter(str[3]),
+                LocalDateTime.parse(str[5]), Integer.parseInt(str[6])
+        );
     }
 
     public static List<Integer> historyFromString(String value) {

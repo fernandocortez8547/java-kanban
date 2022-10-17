@@ -1,14 +1,15 @@
 package tasks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static util.FileConverter.FORMATTER;
 
 public class Epic extends Task {
     private List<Integer> subIds;
 
-    public Epic(int id, String name, String description, TaskStatus status) {
-        super(id, name, description, status);
+    public Epic(int id, String name, String description, TaskStatus status, LocalDateTime startTime, long duration) {
+        super(id, name, description, status, startTime, duration);
         subIds = new ArrayList<>();
     }
 
@@ -41,7 +42,18 @@ public class Epic extends Task {
     }
 
     public List<Integer> getSubIds() {
+        if(subIds.size() == 0) {
+            return Collections.EMPTY_LIST;
+        }
         return subIds;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
     @Override
@@ -52,6 +64,9 @@ public class Epic extends Task {
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
                 ", subTasks size ='" + subIds.size() + '\'' +
+                ", startTime='" + startTime.format(FORMATTER) + "\'" +
+                ", endTime=" + endTime.format(FORMATTER) + "\'" +
+                ", duration=" + duration +
                 '}';
     }
 }
