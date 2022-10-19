@@ -62,8 +62,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void setPrioritaizedTasks(Task task) {
-        prioritaizedTasks.add(task);
-        validateTasks();
+        if(validateTasks(task) && validateTime(task)) {
+            prioritaizedTasks.add(task);
+        } else
+            throw new ManagerValidateException("Время задачи не должно пересекаться.");
     }
 
     private void updateStatus(int epicId) {
@@ -97,6 +99,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (tasks.containsKey(task)) {
             tasks.put(task.getId(), task);
+            setPrioritaizedTasks(task);
         }
         return task.getId();
     }
@@ -110,6 +113,7 @@ public class InMemoryTaskManager implements TaskManager {
         String description = epic.getDescription();
         epics.get(epic.getId()).setName(name);
         epics.get(epic.getId()).setDescription(description);
+
         return epic.getId();
     }
 
@@ -123,6 +127,7 @@ public class InMemoryTaskManager implements TaskManager {
             subTasks.put(subTask.getId(), subTask);
         }
         updateStatus(subTask.getEpicId());
+        setPrioritaizedTasks(subTask);
         return subTask.getId();
     }
 
@@ -294,27 +299,59 @@ public class InMemoryTaskManager implements TaskManager {
 
 
         epic.setStartTime(startTime);
-        prioritaizedTasks.add(epic);
         epic.setDuration(subTaskDurationSum);
         epic.calculateEndTime();
     }
 
-    private boolean validateTime(Set<Task> sortTasks, Task task) {
-        boolean isValidate = false;
-        for(Task itTask : sortTasks) {
-            if(!task.equals(itTask) && task.getStartTime().equals(itTask.getStartTime())) {
-                return true;
+    protected boolean validateTime(Task newTask) {
+        boolean isOverlopTime = true;
+        if(prioritaizedTasks.size() != 0) {
+            for (Task task : prioritaizedTasks) {
+                boolean isCoverTime = (newTask.getStartTime().isBefore(task.getStartTime())
+                        && newTask.getEndTime().isAfter(task.getEndTime()));
+                boolean isBetweenTime = newTask.getStartTime().isAfter(task.getStartTime())
+                        && newTask.getEndTime().isBefore(task.getEndTime());
+                boolean isInvolveStartTime = newTask.getStartTime().isAfter(task.getStartTime())
+                        && newTask.getStartTime().isBefore(task.getEndTime());
+                boolean isInvolveEndTime = newTask.getEndTime().isAfter(task.getStartTime())
+                        && newTask.getEndTime().isBefore(task.getStartTime());
+
+                if (isCoverTime || isBetweenTime || isInvolveStartTime || isInvolveEndTime) {
+                    isOverlopTime = false;
+                }
             }
         }
-        return isValidate;
+
+
+        return isOverlopTime;
     }
-    public void validateTasks() {
-        Set<Task> sortTasks = getPrioritizedTasks();
-        for(Task task : sortTasks) {
-            if(validateTime(sortTasks, task)) {
-                throw new ManagerValidateException("Время задачи " + task.getId() + " пересекается.");
+
+    protected boolean validateTasks(Task newTask) {
+        List<Task> sortTasks = new ArrayList<>(getPrioritizedTasks());
+        boolean isNewTime = true;
+        if(sortTasks.size() != 0) {
+            for (Task task : sortTasks) {
+                if (newTask.getStartTime().equals(task.getStartTime())) {
+                    if (newTask.getId() == task.getId()) {
+
+                        //такой вот замудрённый способ удаления,
+                        //связан с тем что remove от TreeSet не удалял задачу
+                        //оставлял два одинаковых по Id обьекта, с разным startTime
+                        //в то же время, простая замена значений времени не обновляла его место в множестве
+
+                        prioritaizedTasks.clear();
+                        sortTasks.remove(task);
+                        prioritaizedTasks.addAll(sortTasks);
+                        break;
+                    } else {
+                        isNewTime = false;
+                        break;
+                    }
+                }
             }
         }
+
+        return isNewTime;
     }
 }
 

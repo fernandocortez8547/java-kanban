@@ -55,12 +55,12 @@ public class FileConverter {
             );
         } else if (str[1].equals("EPIC")) {
             return new Epic(Integer.parseInt(str[0]), str[2], str[4], statusConverter(str[3]),
-                    LocalDateTime.parse(str[5]), Integer.parseInt(str[6])
+                    LocalDateTime.parse(str[5], FORMATTER), Integer.parseInt(str[7])
             );
         }
 
         return new Task(Integer.parseInt(str[0]), str[2], str[4], statusConverter(str[3]),
-                LocalDateTime.parse(str[5]), Integer.parseInt(str[6])
+                LocalDateTime.parse(str[5], FORMATTER), Integer.parseInt(str[7])
         );
     }
 

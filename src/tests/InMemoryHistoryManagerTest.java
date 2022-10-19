@@ -45,7 +45,7 @@ public class InMemoryHistoryManagerTest {
 
         historyManager.add(task);
         assertEquals(task, historyManager.getHistory().get(0));
-        assertEquals(1, historyManager.getHistory().size());
+        assertEquals(1, historyManager.getHistory().size(), "Добавляется дубликат задачи.");
     }
 
     @Test

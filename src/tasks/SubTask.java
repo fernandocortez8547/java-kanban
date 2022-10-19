@@ -33,14 +33,6 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
     @Override
     public String toString() {
         return "SubTask{" +

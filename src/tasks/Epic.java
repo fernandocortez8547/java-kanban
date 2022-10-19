@@ -48,14 +48,6 @@ public class Epic extends Task {
         return subIds;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
     @Override
     public String toString() {
         return "Epic{" +

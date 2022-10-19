@@ -1,8 +1,10 @@
 package tests;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -11,11 +13,16 @@ import manager.TaskManager;
 import tasks.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
-    protected T taskManager;
+    public T taskManager;
+    public abstract T createManager();
+    @BeforeEach
+    void getManager() throws IOException, InterruptedException {
+        taskManager = createManager();
+    }
 
     protected Task getTask() {
         return new Task(0, "Test addNewTask", "Test addNewTask description", TaskStatus.NEW,
-                LocalDateTime.now(), 60
+                LocalDateTime.now().minusMinutes(60), 60
         );
     }
 
@@ -27,7 +34,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     protected SubTask getSubtask(Epic epic) {
         return new SubTask(0, "Test addNewSubtask", "Test addNewSubTask description",
-                TaskStatus.NEW, epic.getId(), LocalDateTime.now(), 60
+                TaskStatus.NEW, epic.getId(), LocalDateTime.now().plusMinutes(60), 60
         );
     }
 
@@ -210,6 +217,17 @@ abstract class TaskManagerTest<T extends TaskManager> {
         int subTaskId = taskManager.update((SubTask) null);
         assertEquals(0, subTaskId);
     }
+
+    @Test
+    public void getHistory() {
+        assertEquals(0, taskManager.getHistory().size(), "Неверное количество задач.");
+        Task task = getTask();
+        int taskId = taskManager.add(task);
+        taskManager.getTask(taskId);
+
+        assertEquals(1, taskManager.getHistory().size(), "Задачи не добавляются в историю.");
+    }
+
     @Test
     public void deleteAllTasks() {
         Task task = getTask();

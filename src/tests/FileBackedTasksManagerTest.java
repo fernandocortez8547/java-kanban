@@ -1,36 +1,47 @@
 package tests;
 
 import manager.FileBackedTasksManager;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 
 import java.io.File;
-import java.io.FileReader;
-
 public class FileBackedTasksManagerTest  extends TaskManagerTest{
     public static final String PATH = "tasks_test.csv";
-    @BeforeEach
-    public void beforeEach() {
+
+    @Override
+    public FileBackedTasksManager createManager() {
         taskManager = new FileBackedTasksManager(PATH);
+        return (FileBackedTasksManager) taskManager;
+    }
+    @AfterEach
+    public void afterEach() {
+        File file = new File("PATH");
+        file.delete();
     }
 
     @Test
     public void loadAndSaveTest() {
         Task task = getTask();
-        taskManager.add(task);
         Epic epic = getEpic();
+        taskManager.add(task);
         taskManager.add(epic);
         SubTask subTask = getSubtask(epic);
         taskManager.add(subTask);
 
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(PATH);
-        fileBackedTasksManager.repairFromFile(new File(PATH));
+        taskManager.getTask(task.getId());
+        taskManager.getEpic(epic.getId());
+        taskManager.getSubTask(subTask.getId());
 
-        Assertions.assertEquals(1, fileBackedTasksManager.getAllTasks().size());
-        Assertions.assertEquals(1, fileBackedTasksManager.getAllEpics().size());
-        Assertions.assertEquals(1, fileBackedTasksManager.getAllSubTasks().size());
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File(PATH));
+
+        assertEquals(1, fileBackedTasksManager.getAllTasks().size());
+        assertEquals(1, fileBackedTasksManager.getAllEpics().size());
+        assertEquals(1, fileBackedTasksManager.getAllSubTasks().size());
+
+        assertEquals(3, fileBackedTasksManager.getHistory().size());
     }
 
     @Test
@@ -39,12 +50,30 @@ public class FileBackedTasksManagerTest  extends TaskManagerTest{
         int epicId = taskManager.add((Epic) null);
         int subTaskId = taskManager.add((SubTask) null);
 
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(PATH);
-        fileBackedTasksManager.repairFromFile(new File(PATH));
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File(PATH));
 
-        Assertions.assertEquals(0, taskId);
-        Assertions.assertEquals(0, epicId);
-        Assertions.assertEquals(0, subTaskId);
+        assertNull(fileBackedTasksManager.getTask(taskId));
+        assertNull(fileBackedTasksManager.getEpic(epicId));
+        assertNull(fileBackedTasksManager.getSubTask(subTaskId));
+    }
 
+    @Test
+    public void loadAndSaveTaskEmptyAndFullHistory() {
+        Task task = getTask();
+        Epic epic = getEpic();
+        taskManager.add(task);
+        taskManager.add(epic);
+        SubTask subTask = getSubtask(epic);
+        taskManager.add(subTask);
+
+        assertEquals(0, taskManager.getHistory().size());
+
+        taskManager.getTask(task.getId());
+        taskManager.getEpic(epic.getId());
+        taskManager.getSubTask(subTask.getId());
+
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File("src/TestFile.csv"));
+
+        assertEquals(3, fileBackedTasksManager.getHistory().size());
     }
 }

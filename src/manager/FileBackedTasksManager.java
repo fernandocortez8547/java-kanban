@@ -18,7 +18,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         System.out.println("История: \n" + manager.getHistory());
     }
 
-    String path;
+    private String path;
     static List<String> tasksStringList = new ArrayList<>();
 
     public FileBackedTasksManager(String path) {
@@ -27,6 +27,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     private FileBackedTasksManager(File file) {
         repairFromFile(file);
+        path = file.getPath();
     }
 
     @Override
@@ -109,7 +110,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public int removeTask(int taskId) {
-            tasksStringList.remove(FileConverter.toString(tasks.get(taskId)));
+        if(!tasks.containsKey(taskId)) {
+            return 0;
+        }
+
+        tasksStringList.remove(FileConverter.toString(tasks.get(taskId)));
             int supTaskId = super.removeTask(taskId);
             save();
 
@@ -118,6 +123,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public int removeEpic(int epicId) {
+            if(!epics.containsKey(epicId)) {
+                return 0;
+            }
             Epic epic = epics.get(epicId);
             for (int id : epic.getSubIds()) {
                 tasksStringList.remove(FileConverter.toString(subTasks.get(id)));
@@ -134,6 +142,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public int removeSubTask(int subTaskId) {
+        if(!subTasks.containsKey(subTaskId)) {
+            return 0;
+        }
+
             tasksStringList.remove(FileConverter.toString(subTasks.get(subTaskId)));
             int supSubTaskId = super.removeSubTask(subTaskId);
             try {
