@@ -54,7 +54,7 @@ public class FileConverter {
                     Integer.parseInt(str[8])
             );
         } else if (str[1].equals("EPIC")) {
-            return new Epic(Integer.parseInt(str[0]), str[2], str[4], statusConverter(str[3]),
+             return new Epic(Integer.parseInt(str[0]), str[2], str[4], statusConverter(str[3]),
                     LocalDateTime.parse(str[5], FORMATTER), Integer.parseInt(str[7])
             );
         }

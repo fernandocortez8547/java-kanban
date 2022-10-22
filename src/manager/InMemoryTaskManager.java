@@ -96,8 +96,9 @@ public class InMemoryTaskManager implements TaskManager {
         if(task == null) {
             return 0;
         }
-
-        if (tasks.containsKey(task)) {
+        if (tasks.containsKey(task.getId())) {
+            prioritaizedTasks.remove(task);
+            Task oldTask = tasks.get(task.getId());
             tasks.put(task.getId(), task);
             setPrioritaizedTasks(task);
         }
@@ -124,6 +125,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (subTasks.containsKey(subTask.getId())) {
+            prioritaizedTasks.remove(subTasks.get(subTask.getId()));
             subTasks.put(subTask.getId(), subTask);
         }
         updateStatus(subTask.getEpicId());
@@ -304,9 +306,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected boolean validateTime(Task newTask) {
+        Set<Task> sortTasks = getPrioritizedTasks();
         boolean isOverlopTime = true;
-        if(prioritaizedTasks.size() != 0) {
-            for (Task task : prioritaizedTasks) {
+        if(sortTasks.size() != 0) {
+            for (Task task : sortTasks) {
                 boolean isCoverTime = (newTask.getStartTime().isBefore(task.getStartTime())
                         && newTask.getEndTime().isAfter(task.getEndTime()));
                 boolean isBetweenTime = newTask.getStartTime().isAfter(task.getStartTime())
@@ -327,26 +330,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected boolean validateTasks(Task newTask) {
-        List<Task> sortTasks = new ArrayList<>(getPrioritizedTasks());
+        Set<Task> sortTasks = getPrioritizedTasks();
         boolean isNewTime = true;
         if(sortTasks.size() != 0) {
             for (Task task : sortTasks) {
-                if (newTask.getStartTime().equals(task.getStartTime())) {
-                    if (newTask.getId() == task.getId()) {
-
-                        //такой вот замудрённый способ удаления,
-                        //связан с тем что remove от TreeSet не удалял задачу
-                        //оставлял два одинаковых по Id обьекта, с разным startTime
-                        //в то же время, простая замена значений времени не обновляла его место в множестве
-
-                        prioritaizedTasks.clear();
-                        sortTasks.remove(task);
-                        prioritaizedTasks.addAll(sortTasks);
-                        break;
-                    } else {
-                        isNewTime = false;
-                        break;
-                    }
+                if (newTask.getStartTime().equals(task.getStartTime()) && newTask.getId() != (task.getId())) {
+                    isNewTime = false;
+                    break;
+                } else if (newTask.getId() == task.getId()) {
+                    prioritaizedTasks.remove(task);
                 }
             }
         }

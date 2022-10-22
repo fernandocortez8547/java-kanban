@@ -7,7 +7,7 @@ import java.util.Objects;
 import static util.FileConverter.FORMATTER;
 
 
-public class Task implements Cloneable, Comparable<Task> {
+public class Task /*implements Cloneable, Comparable<Task>*/ {
     protected int id;
     protected String name;
     protected String description;
@@ -42,6 +42,7 @@ public class Task implements Cloneable, Comparable<Task> {
 
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
+        calculateEndTime();
     }
 
     public void calculateEndTime() {
@@ -61,9 +62,14 @@ public class Task implements Cloneable, Comparable<Task> {
         return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && Objects.equals(status, task.status);
     }
 
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, name, description, status);
+//    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, status);
+        return Objects.hash(id, name, description, status, duration, startTime, endTime);
     }
 
     public String getName() {
@@ -113,20 +119,20 @@ public class Task implements Cloneable, Comparable<Task> {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
-                ", startTime='" + startTime.format(FORMATTER) + '\'' +
-                ", endTime='" + endTime.format(FORMATTER) + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 ", duration=" + duration +
                 '}';
     }
 
-    @Override
-    public int compareTo(Task task) {
-        if(getStartTime().isAfter(task.getStartTime())) {
-            return -1;
-        } else if (getStartTime().isBefore(task.getStartTime())) {
-            return 1;
-        }
-        return 0;
-    }
+//    @Override
+//    public int compareTo(Task task) {
+//        if(getStartTime().isAfter(task.getStartTime())) {
+//            return -1;
+//        } else if (getStartTime().isBefore(task.getStartTime())) {
+//            return 1;
+//        }
+//        return 0;
+//    }
 }
 
