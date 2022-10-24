@@ -12,7 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, SubTask> subTasks = new HashMap<>();
     protected Map<Integer, Task> tasks = new HashMap<>();
     protected HistoryManager historyManager = Manager.getDefaultHistory();
-    protected Set<Task> prioritaizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    protected TreeSet<Task> prioritaizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     private int idGeneration() {
         return nextId++;
@@ -62,7 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void setPrioritaizedTasks(Task task) {
-        if(validateTasks(task) && validateTime(task)) {
+        if(validateTime(task)) {
             prioritaizedTasks.add(task);
         } else
             throw new ManagerValidateException("Время задачи не должно пересекаться.");
@@ -97,7 +97,20 @@ public class InMemoryTaskManager implements TaskManager {
             return 0;
         }
         if (tasks.containsKey(task.getId())) {
-            prioritaizedTasks.remove(task);
+
+            //по какой-то причине не удалялся никак первый элемент в списке
+            //этим спообом не приходится проходить по всей коллекции, как в предыдущей итерации
+            //ну и прибегать дополнительно к использованию списка
+            if(prioritaizedTasks.first().equals(task)) {
+                Iterator iterator = prioritaizedTasks.iterator();
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                    break;
+                }
+            } else
+                prioritaizedTasks.remove(task);
+
             Task oldTask = tasks.get(task.getId());
             tasks.put(task.getId(), task);
             setPrioritaizedTasks(task);
@@ -327,23 +340,6 @@ public class InMemoryTaskManager implements TaskManager {
 
 
         return isOverlopTime;
-    }
-
-    protected boolean validateTasks(Task newTask) {
-        Set<Task> sortTasks = getPrioritizedTasks();
-        boolean isNewTime = true;
-        if(sortTasks.size() != 0) {
-            for (Task task : sortTasks) {
-                if (newTask.getStartTime().equals(task.getStartTime()) && newTask.getId() != (task.getId())) {
-                    isNewTime = false;
-                    break;
-                } else if (newTask.getId() == task.getId()) {
-                    prioritaizedTasks.remove(task);
-                }
-            }
-        }
-
-        return isNewTime;
     }
 }
 

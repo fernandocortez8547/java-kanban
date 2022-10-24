@@ -43,9 +43,6 @@ public class InMemoryHistoryManagerTest {
         assertEquals(1, addResult, "Задача не добавляется.");
         assertEquals(1, historyManager.getHistory().size(), "Список не содержит задач.");
 
-        historyManager.add(task);
-        assertEquals(task, historyManager.getHistory().get(0));
-        assertEquals(1, historyManager.getHistory().size(), "Добавляется дубликат задачи.");
     }
 
     @Test
@@ -69,5 +66,15 @@ public class InMemoryHistoryManagerTest {
 
         int removeResult = historyManager.remove(-1);
         assertEquals(0, removeResult);
+    }
+
+    @Test
+    public void addRepeatTaskToHistory() {
+        Task task = getTask();
+
+        historyManager.add(task);
+        historyManager.add(task);
+
+        assertEquals(1, historyManager.getHistory().size(), "Задача добавляется повторно.");
     }
 }

@@ -1,7 +1,6 @@
 import tasks.*;
 import manager.*;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
 public class Main {
@@ -30,33 +29,23 @@ public class Main {
 
         subTask.setStartTime(LocalDateTime.now().plusMinutes(241));
         taskManager.update(subTask);
-//        subTask.setStartTime(LocalDateTime.now().minusMinutes(60));
-//        subTask.setDuration(120);
-//        taskManager.update(subTask);
         task.setStartTime(LocalDateTime.now().plusMinutes(360));
         taskManager.update(task);
 
+        Task task2 = new Task(0, "Test 2 addNewTask", "Test 2 addNewTask description", TaskStatus.NEW,
+                LocalDateTime.now().plusMinutes(670), 60
+        );
+
+        taskManager.add(task2);
+        task2.setStartTime(task2.getStartTime().plusMinutes(60));
+        taskManager.update(task2);
         System.out.println(taskManager.getPrioritizedTasks());
 
-//        Task task = new Task(0, "Test addNewTask", "Test addNewTask description", TaskStatus.NEW,
-//                LocalDateTime.now().minusMinutes(60), 60
-//        );
-//        Epic epic = new Epic(0, "Test addNewEpic", "Test addNewEpic description",
-//                TaskStatus.NEW, LocalDateTime.now(), 60
-//        );
-//        taskManager.add(task);
-//        taskManager.add(epic);
-//        SubTask subTask = new SubTask(0, "Test addNewSubtask", "Test addNewSubTask description",
-//                TaskStatus.NEW, epic.getId(), LocalDateTime.now().plusMinutes(60), 60
-//        );
-//        taskManager.add(subTask);
-//
-//        taskManager.getTask(task.getId());
-//        taskManager.getEpic(epic.getId());
-//        taskManager.getSubTask(subTask.getId());
-//
-//        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(new File("src/TestFile.csv"));
-//
-//        System.out.println(fileBackedTasksManager.getHistory());
+        task2.setStartTime(task2.getStartTime().plusMinutes(60));
+        taskManager.update(task2);
+
+//        Task task3 = new Task(0, "Task 3", "Таск с пересекающимся временем", TaskStatus.NEW,
+//                LocalDateTime.now().plusMinutes(120), 60);
+//        taskManager.add(task3);
     }
 }
