@@ -7,7 +7,7 @@ import java.util.Objects;
 import static util.FileConverter.FORMATTER;
 
 
-public class Task /*implements Cloneable, Comparable<Task>*/ {
+public class Task implements Cloneable {
     protected int id;
     protected String name;
     protected String description;

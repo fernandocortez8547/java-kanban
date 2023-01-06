@@ -98,9 +98,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
         if (tasks.containsKey(task.getId())) {
 
-            //по какой-то причине не удалялся никак первый элемент в списке
-            //этим спообом не приходится проходить по всей коллекции, как в предыдущей итерации
-            //ну и прибегать дополнительно к использованию списка
             if(prioritaizedTasks.first().equals(task)) {
                 Iterator iterator = prioritaizedTasks.iterator();
                 while (iterator.hasNext()) {
