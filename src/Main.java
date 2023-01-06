@@ -17,6 +17,12 @@ public class Main {
                 LocalDateTime.now(), 60);
         int subTaskId = taskManager.add(subTask);
 
-        System.out.println(taskManager.getSubTask(subTaskId));
+        Task task = new Task(0, "Task", "Description", TaskStatus.NEW,
+                LocalDateTime.now().plusMinutes(60), 60);
+        taskManager.add(task);
+        task.setStatus(TaskStatus.IN_PROGRESS);
+        taskManager.update(task);
+        taskManager.clearingSubTasks();
+        System.out.println(taskManager.getPrioritizedTasks());
     }
 }

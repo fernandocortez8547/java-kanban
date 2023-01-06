@@ -226,6 +226,17 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void clearingTasks() {
         for(int id : tasks.keySet()) {
+            Task task = tasks.get(id);
+            if(prioritaizedTasks.first().equals(task)) {
+                Iterator iterator = prioritaizedTasks.iterator();
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                    break;
+                }
+            } else
+                prioritaizedTasks.remove(task);
+
             historyManager.remove(id);
         }
         tasks.clear();
@@ -233,6 +244,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void clearingEpics() {
         for(int id : epics.keySet()) {
+            Epic epic = epics.get(id);
+
+            if(prioritaizedTasks.first().equals(epic)) {
+                Iterator iterator = prioritaizedTasks.iterator();
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                    break;
+                }
+            } else
+                prioritaizedTasks.remove(epic);
+
             clearingEpicSubtasks(id);
             historyManager.remove(id);
         }
@@ -241,7 +264,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void clearingSubTasks() {
+        for(SubTask subTask : subTasks.values()) {
+            if(prioritaizedTasks.first().equals(subTask)) {
+                Iterator iterator = prioritaizedTasks.iterator();
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                    break;
+                }
+            } else
+                prioritaizedTasks.remove(subTask);
+        }
+
         subTasks.clear();
+
         for (int EpicId : epics.keySet()) {
             Epic epic = epics.get(EpicId);
             epic.clearingSubIds();
@@ -253,7 +289,20 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int removeTask(int taskId) {
         if(tasks.containsKey(taskId)) {
+            Task task = tasks.get(taskId);
+            prioritaizedTasks.remove(tasks.get(taskId));
             tasks.remove(taskId);
+
+            if(prioritaizedTasks.first().equals(task)) {
+                Iterator iterator = prioritaizedTasks.iterator();
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                    break;
+                }
+            } else
+                prioritaizedTasks.remove(task);
+
             historyManager.remove(taskId);
             return taskId;
         }
@@ -264,6 +313,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int removeEpic(int epicId) {
         if (epics.containsKey(epicId)) {
+            Epic epic = epics.get(epicId);
             clearingEpicSubtasks(epicId);
             epics.remove(epicId);
             historyManager.remove(epicId);
@@ -276,8 +326,20 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int removeSubTask(int subTaskId) {
         if (subTasks.containsKey(subTaskId)) {
+            SubTask subTask = subTasks.get(subTaskId);
             int epicId = subTasks.get(subTaskId).getEpicId();
             epics.get(epicId).removeSubTaskId(subTaskId);
+
+            if(prioritaizedTasks.first().equals(subTask)) {
+                Iterator iterator = prioritaizedTasks.iterator();
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                    break;
+                }
+            } else
+                prioritaizedTasks.remove(subTask);
+
             subTasks.remove(subTaskId);
             updateStatus(epicId);
             historyManager.remove(subTaskId);
@@ -290,6 +352,18 @@ public class InMemoryTaskManager implements TaskManager {
     private void clearingEpicSubtasks(int epicId) {
         Epic epic = epics.get(epicId);
         for (int id : epic.getSubIds()) {
+            SubTask subTask = subTasks.get(id);
+
+            if(prioritaizedTasks.first().equals(subTask)) {
+                Iterator iterator = prioritaizedTasks.iterator();
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                    break;
+                }
+            } else
+                prioritaizedTasks.remove(subTask);
+
             subTasks.remove(id);
             historyManager.remove(id);
         }
