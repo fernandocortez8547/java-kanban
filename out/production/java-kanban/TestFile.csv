@@ -1,1 +1,6 @@
 id,type,name,status,description,epic
+1,EPIC,Epic,NEW,Description,06.10.1998|12:00:00,06.10.1998|13:00:00,60,
+2,SUBTASK,SubTask,DONE,Говном,1,06.10.1998|10:00:00,06.10.1998|11:00:00,60,
+3,TASK,Task,NEW,Description,06.10.1998|14:00:00,06.10.1998|15:00:00,60
+
+1, 3, 2
