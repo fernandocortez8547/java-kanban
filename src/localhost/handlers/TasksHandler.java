@@ -1,4 +1,4 @@
-package localhost;
+package localhost.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

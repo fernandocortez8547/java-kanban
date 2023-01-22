@@ -1,4 +1,4 @@
-package localhost;
+package localhost.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -15,6 +15,7 @@ public class HistoryHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         Gson gson = new Gson();
         List<Task> historyList = taskManager.getHistory();
+        System.out.println(historyList.size());
         String response = gson.toJson(historyList);
 
         exchange.sendResponseHeaders(200, 0);

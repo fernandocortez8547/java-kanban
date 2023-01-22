@@ -1,15 +1,18 @@
-package localhost;
+package localhost.handlers;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import localhost.LocalDateAdapter;
 import tasks.Epic;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static localhost.HttpTaskServer.*;
@@ -19,7 +22,9 @@ public class EpicHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())
+                .create();
         URI uri = exchange.getRequestURI();
         String query = uri.getQuery();
         currentClass = "epic";
@@ -32,7 +37,7 @@ public class EpicHandler implements HttpHandler {
                 JsonElement json = JsonParser.parseString(gsonTask);
                 epic = (Epic) gsonToTask(json.getAsJsonObject(), FORMATTER, currentClass);
                 int id = taskManager.add(epic);
-                response = "Успешное добавление Эпика! ID - " + id;
+                response = "" + id;
                 break;
             case "GET":
                 if(query == null) {
@@ -51,7 +56,7 @@ public class EpicHandler implements HttpHandler {
                 } else {
                     id = Integer.parseInt(query.split("=")[1]);
                     taskManager.removeEpic(id);
-                    response = "Эпик удален.";
+                    response = "Эпик удалён.";
                 }
                 break;
             default:

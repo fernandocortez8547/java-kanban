@@ -10,9 +10,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
-    //создал этот класс случайно
-    //проверки всех статусов происходят через мэнэджер
-    //по тз нашел только возможный без менеджера здесь тест пустого списка
     @Test
     public void emptySubTaskList() {
         Epic epic = new Epic(0, "Test addNewEpic", "Test addNewEpic description",

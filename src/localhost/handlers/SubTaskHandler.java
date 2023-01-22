@@ -1,17 +1,16 @@
-package localhost;
+package localhost.handlers;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import localhost.LocalDateAdapter;
 import tasks.SubTask;
 import tasks.TaskStatus;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static localhost.HttpTaskServer.*;
@@ -22,7 +21,9 @@ public class SubTaskHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())
+                .create();
         URI uri = exchange.getRequestURI();
         String query = uri.getQuery();
         currentClass = "subtask";
@@ -45,7 +46,7 @@ public class SubTaskHandler implements HttpHandler {
                 } else {
                     subTask = (SubTask) gsonToTask(json.getAsJsonObject(), FORMATTER, currentClass);
                     id = taskManager.add(subTask);
-                    response = "Успешное добавление подзадачи ID - " + id;
+                    response = "" + id;
                 }
                 break;
             case "GET":

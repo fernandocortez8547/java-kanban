@@ -11,23 +11,17 @@ import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
 
-    public static void main(String[] args) {
-        TaskManager manager = loadFromFile(new File("src" + File.separator + "TestFile.csv"));
-        //можно переделать восстан-е под String.format
-        System.out.println("Таски: \n" + manager);
-        System.out.println("История: \n" + manager.getHistory());
-    }
-
-    private String path;
+    protected static String PATH = "src/TestFile.csv";
+    protected File file = new File(PATH);
     static List<String> tasksStringList = new ArrayList<>();
 
-    public FileBackedTasksManager(String path) {
-        this.path = path;
+    public FileBackedTasksManager() {
+        load(file);
     }
-
-    private FileBackedTasksManager(File file) {
+    public FileBackedTasksManager(File file) {
+        this.file = file;
         repairFromFile(file);
-        path = file.getPath();
+        PATH = file.getPath();
     }
 
     @Override
@@ -163,7 +157,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     public void save() throws ManagerSaveException {
-        try (FileWriter writer = new FileWriter(path, StandardCharsets.UTF_8)) {
+        try (FileWriter writer = new FileWriter(PATH, StandardCharsets.UTF_8)) {
             writer.write("id,type,name,status,description,epic" + "\n");
             for (int i = 0; i < tasksStringList.size(); i++) {
                 if (i == tasksStringList.size() - 1) {
@@ -183,7 +177,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-    public static FileBackedTasksManager loadFromFile(File file) {
+    public static FileBackedTasksManager load(File file) {
         return new FileBackedTasksManager(file);
     }
 
@@ -196,6 +190,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 lines.add(bf.readLine());
             }
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ManagerSaveException("Ошибка записи");
         }
 
@@ -226,7 +221,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             tasks.put(task.getId(), task);
     }
 
-    private void repairHistory(int id) {
+    protected void repairHistory(int id) {
         if (subTasks.containsKey(id))
             historyManager.add(subTasks.get(id));
         else if (epics.containsKey(id))
