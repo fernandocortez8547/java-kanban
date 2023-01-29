@@ -20,7 +20,6 @@ public class FileConverter {
     }
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm:ss");
-    public static DateTimeFormatter HTTP_SERVER_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss");
 
     public static Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())

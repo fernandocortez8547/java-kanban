@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 import manager.*;
 
@@ -18,6 +19,7 @@ public class HttpTaskServer {
     // Сделал гетер protected, для этого пришлось переместить класс в пакет хэндлеров
     private static final TaskManager DEFAULT_TASK = Manager.getDefaultTask();
     private HttpServer httpServer = null;
+    public static DateTimeFormatter HTTP_SERVER_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss");
 
     protected TaskManager getHandlerTaskManager() {
         return DEFAULT_TASK;

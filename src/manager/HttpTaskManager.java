@@ -53,9 +53,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
         JsonElement jsonEpics = JsonParser.parseString(client.load("epics"));
         if(!jsonEpics.isJsonNull()) {
-            System.out.println("jsonArray: " + jsonEpics.isJsonArray());
             JsonArray epicsArray = jsonEpics.getAsJsonArray();
-
             for(JsonElement jsonEpic : epicsArray) {
                 Epic epic = GSON.fromJson(jsonEpic.toString(), Epic.class);
                 add(epic);
