@@ -47,4 +47,5 @@ public interface TaskManager {
     int removeSubTask(int subTaskId);
 
     Set<Task> getPrioritizedTasks();
+
 }

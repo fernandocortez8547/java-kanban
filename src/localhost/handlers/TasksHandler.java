@@ -1,26 +1,28 @@
 package localhost.handlers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import manager.HttpTaskManager;
+import manager.TaskManager;
 import tasks.Task;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
-import java.util.TreeSet;
-import static localhost.HttpTaskServer.*;
+
+import static util.FileConverter.GSON;
 
 public class TasksHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        Gson gson = new Gson();
+        TaskManager taskManager = new HttpTaskServer().getHandlerTaskManager();
+
         String method = exchange.getRequestMethod();
-        String response = "";
+        String response;
+
         if(method.equals("GET")) {
-            Set<Task> prioritazedTasks = taskManager.getPrioritizedTasks();
-            response = gson.toJson(prioritazedTasks);
+            Set<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+            response = GSON.toJson(prioritizedTasks);
         } else {
             response = "Неверный метод";
         }

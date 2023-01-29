@@ -1,25 +1,27 @@
 package localhost.handlers;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import manager.TaskManager;
 import tasks.Task;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import static localhost.HttpTaskServer.*;
+import static util.FileConverter.GSON;
+
 public class HistoryHandler implements HttpHandler {
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        Gson gson = new Gson();
-        List<Task> historyList = taskManager.getHistory();
-        System.out.println(historyList.size());
-        String response = gson.toJson(historyList);
+    public void handle(HttpExchange h) throws IOException {
+        TaskManager taskManager = new HttpTaskServer().getHandlerTaskManager();
 
-        exchange.sendResponseHeaders(200, 0);
-        try(OutputStream os = exchange.getResponseBody()) {
+        List<Task> historyList = taskManager.getHistory();
+        String response = GSON.toJson(historyList);
+
+        h.sendResponseHeaders(200, 0);
+
+        try(OutputStream os = h.getResponseBody()) {
             os.write(response.getBytes());
         }
     }

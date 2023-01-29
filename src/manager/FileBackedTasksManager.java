@@ -1,5 +1,6 @@
 package manager;
 
+import exceptions.ManagerSaveException;
 import tasks.*;
 import util.FileConverter;
 
@@ -13,7 +14,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     protected static String PATH = "src/TestFile.csv";
     protected File file = new File(PATH);
-    static List<String> tasksStringList = new ArrayList<>();
+    protected static List<String> tasksStringList = new ArrayList<>();
 
     public FileBackedTasksManager() {
         load(file);

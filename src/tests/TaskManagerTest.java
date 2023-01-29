@@ -14,7 +14,7 @@ import tasks.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
     public T taskManager;
-    public abstract T createManager();
+    public abstract T createManager() throws IOException;
     @BeforeEach
     void getManager() throws IOException, InterruptedException {
         taskManager = createManager();

@@ -6,6 +6,7 @@ import manager.Manager;
 import manager.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.SubTask;
@@ -21,27 +22,29 @@ public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
 
     protected static TaskManager taskManager;
     protected static KVServer server;
-
-    @Override
-    public HttpTaskManager createManager() {
-        try {
-            server = new KVServer();
-            server.start();
-            taskManager = Manager.getDefaultTask();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return (HttpTaskManager) taskManager;
-    }
-
     @AfterEach
-    void stopServer(){
+    public void clearingManagerFields() {
+        if(!taskManager.getAllTasks().isEmpty()) {
+            taskManager.clearingTasks();
+        }
+        if(!taskManager.getAllEpics().isEmpty()) {
+            taskManager.clearingEpics();
+            taskManager.clearingSubTasks();
+        }
         server.stop();
     }
 
+    public HttpTaskManager createManager() throws IOException {
+        server = new KVServer();
+        server.start();
+        taskManager = Manager.getDefaultTask();
+        return (HttpTaskManager) Manager.getDefaultTask();
+    }
+
+
+
     @Test
     void loadTaskTest() {
-        taskManager = createManager();
         Task task1 = new Task(0, "Task 1", "Description",
                 TaskStatus.NEW, LocalDateTime.now(), 60);
         Task task2 = new Task(0, "Task 2", "Description",
@@ -91,5 +94,4 @@ public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
         assertEquals(1, taskManager.getAllSubTasks().size());
         assertEquals(2, taskManager.getHistory().size());
     }
-
 }

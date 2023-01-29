@@ -3,36 +3,35 @@ package localhost.handlers;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import localhost.LocalDateAdapter;
+import manager.TaskManager;
 import tasks.SubTask;
 import tasks.TaskStatus;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static localhost.HttpTaskServer.*;
-import static util.FileConverter.gsonToTask;
-import static util.FileConverter.statusConverter;
+import static util.FileConverter.*;
+
 
 public class SubTaskHandler implements HttpHandler {
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())
-                .create();
-        URI uri = exchange.getRequestURI();
-        String query = uri.getQuery();
-        currentClass = "subtask";
-        String method = exchange.getRequestMethod();
-        String response = "";
+    public void handle(HttpExchange h) throws IOException {
+        TaskManager taskManager = new HttpTaskServer().getHandlerTaskManager();
         SubTask subTask;
+
+        URI uri = h.getRequestURI();
+
+        String query = uri.getQuery();
+        String method = h.getRequestMethod();
+        String response;
+
+
         switch(method) {
             case "POST":
-                String gsonSubTask = new String(exchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
+                String gsonSubTask = new String(h.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
                 JsonElement json = JsonParser.parseString(gsonSubTask);
                 JsonObject jsonObject = json.getAsJsonObject();
                 int id = jsonObject.get("id").getAsInt();
@@ -44,7 +43,7 @@ public class SubTaskHandler implements HttpHandler {
                     taskManager.update(subTask);
                     response = "Успешное обновление подзадачи. ID - " + id;
                 } else {
-                    subTask = (SubTask) gsonToTask(json.getAsJsonObject(), FORMATTER, currentClass);
+                    subTask = GSON.fromJson(gsonSubTask, SubTask.class);
                     id = taskManager.add(subTask);
                     response = "" + id;
                 }
@@ -53,20 +52,20 @@ public class SubTaskHandler implements HttpHandler {
                 if(uri.getPath().contains("epic")) {
                     id = Integer.parseInt(query.split("=")[1]);
                     List<SubTask> subTasks = taskManager.getEpicSubTasks(id);
-                    response = gson.toJson(subTasks);
+                    response = GSON.toJson(subTasks);
                 } else if(query == null) {
                     List<SubTask> subTasks = taskManager.getAllSubTasks();
-                    response = gson.toJson(subTasks);
+                    response = GSON.toJson(subTasks);
                 } else {
                     id = Integer.parseInt(query.split("=")[1]);
                     subTask = taskManager.getSubTask(id);
-                    response = gson.toJson(subTask);
+                    response = GSON.toJson(subTask);
                 }
                 break;
             case "DELETE":
                 if(query == null) {
                     taskManager.clearingSubTasks();
-                    response = gson.toJson("Подзадачи удалены");
+                    response = GSON.toJson("Подзадачи удалены");
                 } else {
                     id = Integer.parseInt(query.split("=")[1]);
                     taskManager.removeSubTask(id);
@@ -78,9 +77,9 @@ public class SubTaskHandler implements HttpHandler {
                 break;
         }
 
-        exchange.sendResponseHeaders(200, 0);
+        h.sendResponseHeaders(200, 0);
 
-        try (OutputStream os = exchange.getResponseBody()) {
+        try (OutputStream os = h.getResponseBody()) {
             os.write(response.getBytes());
         }
     }

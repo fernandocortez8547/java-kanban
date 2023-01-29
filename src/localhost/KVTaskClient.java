@@ -2,74 +2,66 @@ package localhost;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import exceptions.KvClientStartException;
+
 public class KVTaskClient {
-    private String API_TOKEN;
+    private final String apiToken;
     private final String url;
-    HttpClient httpClient;
-    public KVTaskClient(String url)  {
+    private HttpClient httpClient;
+
+    public KVTaskClient(String url) {
         this.url = url;
+        httpClient = HttpClient.newHttpClient();
 
         try {
-            URI registerUrl = new URI(url + "/register");
-            httpClient = HttpClient.newHttpClient();
-            HttpRequest httpRequest = HttpRequest
+            URI registerUrl = URI.create(url + "/register");
+            HttpRequest request = HttpRequest
                     .newBuilder()
                     .uri(registerUrl)
                     .GET()
                     .build();
             HttpResponse<String> response = httpClient.send(
-                    httpRequest,
+                    request,
                     HttpResponse.BodyHandlers.ofString()
             );
-            API_TOKEN = response.body();
-        } catch (URISyntaxException | InterruptedException | IOException e) {
-            System.out.println("При запуске KVTaskClient произошла ошибка.");
-            e.printStackTrace();
+            apiToken = response.body();
+        } catch (InterruptedException | IOException e) {
+            throw new KvClientStartException("При запуске KVTaskClient произошла ошибка.");
         }
     }
 
     public void put(String key, String json) {
         try {
-            URI saveUrl = new URI(url + "/save/" + key + "?API_TOKEN=" + API_TOKEN);
-            httpClient = HttpClient.newHttpClient();
+            URI saveUrl = URI.create(url + "/save/" + key + "?API_TOKEN=" + apiToken);
             HttpRequest httpRequest = HttpRequest
                     .newBuilder()
                     .uri(saveUrl)
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
 
-            HttpResponse<String> response = httpClient.send(
-                    httpRequest,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            System.out.println("Ошибка при сохранении задачи.");
+            httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new KvClientStartException("При сохранении задачи произошла ошибка.");
         }
     }
 
     public String load(String key) {
-        HttpResponse<String> httpResponse = null;
+        HttpResponse<String> response = null;
         try {
-        URI loadUri = new URI(url + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
-        httpClient = HttpClient.newHttpClient();
-        HttpRequest httpRequest = HttpRequest
-                .newBuilder()
-                .uri(loadUri)
-                .GET()
-                .build();
-        httpResponse = httpClient.send(
-                httpRequest,
-                HttpResponse.BodyHandlers.ofString()
-        );
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            System.out.println("Ошибка при сохранении задачи.");
+            URI loadUri = URI.create(url + "/load/" + key + "?API_TOKEN=" + apiToken);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(loadUri)
+                    .GET()
+                    .build();
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new KvClientStartException("При загрузке задач произошла ошибка.");
         }
 
-        return httpResponse.body();
+        return response.body();
     }
 }

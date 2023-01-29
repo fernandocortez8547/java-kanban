@@ -1,24 +1,21 @@
 package manager;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import localhost.HttpTaskServer;
+import exceptions.ManagerSaveException;
 import localhost.KVTaskClient;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
 import util.FileConverter;
+import static util.FileConverter.GSON;
 
-import java.io.File;
 import java.util.List;
 
 public class HttpTaskManager extends FileBackedTasksManager {
 
     private final KVTaskClient client;
-    protected Gson gson = new Gson();
-
     public HttpTaskManager(String url) {
         client = new KVTaskClient(url);
         load();
@@ -26,22 +23,21 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     public void save() throws ManagerSaveException {
-        Gson gson = new Gson();
         if(!tasks.isEmpty()) {
-            String gsonTasks = gson.toJson(tasks);
+            String gsonTasks = GSON.toJson(tasks);
             client.put("tasks", gsonTasks);
         }
         if(!epics.isEmpty()) {
-            String gsonEpics = gson.toJson(epics);
+            String gsonEpics = GSON.toJson(epics);
             client.put("epics", gsonEpics);
         }
         if(!subTasks.isEmpty()) {
-            String gsonSubTasks = gson.toJson(subTasks);
+            String gsonSubTasks = GSON.toJson(subTasks);
             client.put("subTasks", gsonSubTasks);
         }
         List<Task> history = historyManager.getHistory();
         if(!history.isEmpty()) {
-            String gsonHistory = gson.toJson(history);
+            String gsonHistory = GSON.toJson(history);
             client.put("history", gsonHistory);
         }
     }
@@ -51,19 +47,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
         if(!jsonTasks.isJsonNull()) {
             JsonArray tasksArray = jsonTasks.getAsJsonArray();
             for(JsonElement jsonTask : tasksArray) {
-                Task task = FileConverter.gsonToTask(jsonTask.getAsJsonObject(),
-                        HttpTaskServer.FORMATTER,
-                        "task");
+                Task task = GSON.fromJson(jsonTask.toString(), Task.class);
                 add(task);
             }
         }
         JsonElement jsonEpics = JsonParser.parseString(client.load("epics"));
         if(!jsonEpics.isJsonNull()) {
+            System.out.println("jsonArray: " + jsonEpics.isJsonArray());
             JsonArray epicsArray = jsonEpics.getAsJsonArray();
+
             for(JsonElement jsonEpic : epicsArray) {
-                Epic epic = (Epic)FileConverter.gsonToTask(jsonEpic.getAsJsonObject(),
-                        HttpTaskServer.FORMATTER,
-                        "epic");
+                Epic epic = GSON.fromJson(jsonEpic.toString(), Epic.class);
                 add(epic);
             }
         }
@@ -71,9 +65,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         if(!jsonSubTasks.isJsonNull()) {
             JsonArray subTasksArray = jsonSubTasks.getAsJsonArray();
             for(JsonElement jsonSubTask : subTasksArray) {
-                SubTask subTask = (SubTask) FileConverter.gsonToTask(jsonSubTask.getAsJsonObject(),
-                        HttpTaskServer.FORMATTER,
-                        "subTask");
+                SubTask subTask = GSON.fromJson(jsonSubTask.toString(), SubTask.class);
                 add(subTask);
             }
         }

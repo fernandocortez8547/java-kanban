@@ -1,9 +1,13 @@
 package util;
 
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import localhost.LocalDateAdapter;
 import manager.HistoryManager;
 import tasks.*;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -16,6 +20,13 @@ public class FileConverter {
     }
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm:ss");
+    public static DateTimeFormatter HTTP_SERVER_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss");
+
+    public static Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())
+            .create();
+
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     public static String toString(Task task) {
         if(task instanceof SubTask) {
@@ -101,40 +112,4 @@ public class FileConverter {
         }
         return TaskStatus.NEW;
     }
-
-    public static Task gsonToTask(JsonObject jsonObject, DateTimeFormatter formatter, String currentClass) {
-
-        if(currentClass.equals("subtask")) {
-            return new SubTask(
-                    jsonObject.get("id").getAsInt(),
-                    jsonObject.get("name").getAsString(),
-                    jsonObject.get("description").getAsString(),
-                    FileConverter.statusConverter(jsonObject.get("status").getAsString()),
-                    jsonObject.get("epicId").getAsInt(),
-                    LocalDateTime.parse(jsonObject.get("startTime").getAsString(), formatter),
-                    jsonObject.get("duration").getAsInt()
-            );
-        } else if(currentClass.equals("epic")) {
-            return new Epic(
-                    jsonObject.get("id").getAsInt(),
-                    jsonObject.get("name").getAsString(),
-                    jsonObject.get("description").getAsString(),
-                    FileConverter.statusConverter(jsonObject.get("status").getAsString()),
-                    LocalDateTime.parse(jsonObject.get("startTime").getAsString(), formatter),
-                    jsonObject.get("duration").getAsInt()
-            );
-        } else if(currentClass.equals("task")) {
-            return new Task(
-                    jsonObject.get("id").getAsInt(),
-                    jsonObject.get("name").getAsString(),
-                    jsonObject.get("description").getAsString(),
-                    FileConverter.statusConverter(jsonObject.get("status").getAsString()),
-                    LocalDateTime.parse(jsonObject.get("startTime").getAsString(), formatter),
-                    jsonObject.get("duration").getAsInt()
-            );
-        }
-        return null;
-    }
-
-
 }

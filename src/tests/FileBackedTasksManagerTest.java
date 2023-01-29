@@ -4,6 +4,7 @@ import manager.FileBackedTasksManager;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 
@@ -13,6 +14,15 @@ public class FileBackedTasksManagerTest  extends TaskManagerTest{
     public static final String PATH = "src/tests/tasks_test.csv";
     public final File file = new File(PATH);
 
+    @AfterEach
+    public void clearingManagerFields() {
+        if(!taskManager.getAllTasks().isEmpty()) {
+            taskManager.clearingTasks();
+        }
+        if(!taskManager.getAllEpics().isEmpty()) {
+            taskManager.clearingEpics();
+        }
+    }
     @Override
     public FileBackedTasksManager createManager() {
         taskManager = new FileBackedTasksManager(file);
@@ -30,6 +40,8 @@ public class FileBackedTasksManagerTest  extends TaskManagerTest{
 
     @Test
     public void loadAndSaveTest() {
+        taskManager.clearingTasks();
+
         Task task = getTask();
         Epic epic = getEpic();
         taskManager.add(task);

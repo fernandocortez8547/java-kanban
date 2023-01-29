@@ -227,16 +227,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void clearingTasks() {
         for(int id : tasks.keySet()) {
             Task task = tasks.get(id);
-            if(prioritaizedTasks.first().equals(task)) {
-                Iterator iterator = prioritaizedTasks.iterator();
-                while (iterator.hasNext()) {
-                    iterator.next();
-                    iterator.remove();
-                    break;
-                }
-            } else
-                prioritaizedTasks.remove(task);
-
+            prioritaizedTasks.remove(task);
             historyManager.remove(id);
         }
         tasks.clear();
